@@ -7,13 +7,10 @@ public class MenuManager : MonoBehaviour
     public GameObject MenuPrin;
     public GameObject MenuAjus;
 
-    [Header("Nombre de la escena")]
-    public string EscenaJuego;
-
     public void Jugar()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(EscenaJuego);
+        SceneManager.LoadScene("Prueba1");
     }
 
     public void AbrirAjusteSonido()
