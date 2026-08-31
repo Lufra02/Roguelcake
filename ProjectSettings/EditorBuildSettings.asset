@@ -8,6 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Pepe/Escenas/MenuPrincipal.unity
     guid: bc44ab0523c896f4da997a675d8c8448
+  - enabled: 1
+    path: Assets/Pepe/Escenas/Prueba1.unity
+    guid: 5d3daace1e7f8094caae7a575478b87e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
