@@ -23,13 +23,22 @@ public class PlayerCombat : MonoBehaviour
     private float lastMeleeTime = -999f;
     private float lastProjectileTime = -999f;
 
+    // Cuando está en false (ej. tienda abierta, diálogo, cinemática), el jugador no puede atacar ni disparar.
+    public bool CanAttack { get; private set; } = true;
+
     void Awake()
     {
         if (playerController == null) playerController = GetComponent<PlayerController>();
     }
 
+    public void SetCombatEnabled(bool enabled)
+    {
+        CanAttack = enabled;
+    }
+
     void Update()
     {
+        if (!CanAttack) return;
         if (Mouse.current == null) return;
 
         // Click izquierdo = ataque cuerpo a cuerpo (ataque principal del juego)
