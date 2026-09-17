@@ -11,7 +11,7 @@ public class Health : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
     }
 
-    public void TakeDamage(int dmg) { 
+    public virtual void TakeDamage(int dmg) { 
        
         currentHealth -= dmg;
         if (currentHealth <= 0) {
@@ -19,7 +19,7 @@ public class Health : MonoBehaviour, IDamageable
         }
     }
 
-    public void Die() 
+    public virtual void Die() 
     {
         // Desaparecer el pj - tal vez
 
@@ -29,7 +29,6 @@ public class Health : MonoBehaviour, IDamageable
 
         // Mostrar HUD "has muerto"
         
-
     }
 
 

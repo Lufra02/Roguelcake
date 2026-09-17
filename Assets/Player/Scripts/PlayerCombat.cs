@@ -19,7 +19,6 @@ public class PlayerCombat : MonoBehaviour
     public GameObject projectilePrefab;
     public float projectileSpeed = 12f;
     public float projectileCooldown = 0.6f;
-
     private float lastMeleeTime = -999f;
     private float lastProjectileTime = -999f;
 

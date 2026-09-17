@@ -19,7 +19,7 @@ public class PlayerManager : MonoBehaviour
     GameManager gameManager;
 
     // REFERENCIAS
-    [HideInInspector] public Health playerHealth;
+    [HideInInspector] public PlayerHealth playerHealth;
     [HideInInspector] public PlayerCombat playerCombat;
     [HideInInspector] public PlayerController playerController;
     [HideInInspector] public PlayerInteraction playerInteraction;
@@ -37,7 +37,7 @@ public class PlayerManager : MonoBehaviour
     {
         // ASIGNACIONES
         playerInteraction = GetComponent<PlayerInteraction>();
-        playerHealth = GetComponent<Health>();
+        playerHealth = GetComponent<PlayerHealth>();
         playerCombat = GetComponent<PlayerCombat>();
         playerController = GetComponent<PlayerController>();
 
