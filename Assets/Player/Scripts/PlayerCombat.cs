@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerCombat : MonoBehaviour
 {
     [Header("Referencias")]
+    private PlayerManager playerManager;
     public PlayerController playerController;
     public Transform aimPoint; // Objeto vacío, hijo del jugador, colocado un poco delante de él (usado como punto de disparo)
 
@@ -21,13 +22,16 @@ public class PlayerCombat : MonoBehaviour
     public float projectileCooldown = 0.6f;
     private float lastMeleeTime = -999f;
     private float lastProjectileTime = -999f;
-
-    // Cuando está en false (ej. tienda abierta, diálogo, cinemática), el jugador no puede atacar ni disparar.
+    public int damagePerShoot = 7;
     
-
     void Awake()
     {
         if (playerController == null) playerController = GetComponent<PlayerController>();
+    }
+
+    private void Start()
+    {
+        playerManager = PlayerManager.Instance;
     }
 
     public void SetCombatEnabled(bool enabled)
@@ -74,6 +78,9 @@ public class PlayerCombat : MonoBehaviour
     void ShootProjectile()
     {
         if (projectilePrefab == null) return;
+        if (playerManager.playerHealth.currentHealth <= damagePerShoot) return;
+
+        playerManager.playerHealth.TakeDamage(damagePerShoot);
 
         lastProjectileTime = Time.time;
 

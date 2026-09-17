@@ -15,7 +15,7 @@ public class EnemyDummie : MonoBehaviour, IDamageable
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
-        Debug.Log($"{name} recibió {amount} de daño. Vida restante: {currentHealth}");
+        //Debug.Log($"{name} recibió {amount} de daño. Vida restante: {currentHealth}");
  
         if (currentHealth <= 0f)
         {
