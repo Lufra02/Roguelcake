@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour
 {
-    public float damage = 5f;
+    public int damage = 5;
     public float lifeTime = 3f;
 
     private Rigidbody rb;

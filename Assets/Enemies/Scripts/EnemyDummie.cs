@@ -12,7 +12,7 @@ public class EnemyDummie : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
     }
  
-    public void TakeDamage(float amount)
+    public void TakeDamage(int amount)
     {
         currentHealth -= amount;
         Debug.Log($"{name} recibió {amount} de daño. Vida restante: {currentHealth}");

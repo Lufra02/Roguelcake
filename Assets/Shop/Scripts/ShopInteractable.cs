@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 // Colócalo en el GameObject de la "Tienda", junto con un Collider (puede ser trigger o no,
 // solo se usa para que PlayerInteraction lo detecte por OverlapSphere) en la capa "Interactable".
@@ -15,6 +14,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
     public PlayerCombat playerCombat;
 
     private bool isOpen = false;
+    private PlayerManager playerManager;
 
     public void Interact(GameObject interactor)
     {
@@ -34,6 +34,8 @@ public class ShopInteractable : MonoBehaviour, IInteractable
 
         if (playerController == null) playerController = interactor.GetComponent<PlayerController>();
         if (playerCombat == null) playerCombat = interactor.GetComponent<PlayerCombat>();
+        playerManager = interactor.GetComponent<PlayerManager>();
+        playerManager?.SetOpenShop(this);
 
         playerController?.SetMovementEnabled(false);
         playerCombat?.SetCombatEnabled(false);
@@ -45,6 +47,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
     public void CloseShop()
     {
         isOpen = false;
+        playerManager?.ClearOpenShop(this);
 
         if (shopCanvas != null) shopCanvas.SetActive(false);
 
@@ -52,12 +55,4 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         playerCombat?.SetCombatEnabled(true);
     }
 
-    void Update()
-    {
-        // Cierra la tienda también con Escape, como atajo adicional a presionar E de nuevo
-        if (isOpen && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            CloseShop();
-        }
-    }
 }

@@ -17,6 +17,8 @@ public class PlayerInteraction : MonoBehaviour
 
     void Update()
     {
+        if (PlayerManager.Instance.isPaused) return;
+
         FindClosestInteractable();
 
         if (currentInteractable != null && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)

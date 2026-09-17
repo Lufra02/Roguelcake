@@ -21,8 +21,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveInput;
     private Vector3 mouseWorldPosition;
 
-    // Cuando está en false (ej. tienda abierta, diálogo, cinemática), el jugador no se mueve ni rota.
-    public bool CanMove { get; private set; } = true;
 
     void Awake()
     {
@@ -35,7 +33,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (!CanMove)
+         
+        if (!PlayerManager.Instance.canMove)
         {
             moveInput = Vector3.zero;
             return;
@@ -49,7 +48,7 @@ public class PlayerController : MonoBehaviour
     // Al deshabilitar, detiene inmediatamente la velocidad horizontal (conserva la vertical, por gravedad).
     public void SetMovementEnabled(bool enabled)
     {
-        CanMove = enabled;
+        PlayerManager.Instance.canMove = enabled;
         moveInput = Vector3.zero;
 
         if (!enabled)

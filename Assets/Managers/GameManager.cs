@@ -3,30 +3,30 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class MainManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     // ----- SingleTon ---------
     #region Singleton
-    public static MainManager instance { get; private set; }
+    public static GameManager Instance { get; private set; }
     private void Awake()
     {
-        if (instance != null && instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        instance = this;
+        Instance = this;
         //DontDestroyOnLoad(gameObject);
     }
 
-    public static MainManager GetInstance() => instance;
+    public static GameManager GetInstance() => Instance;
 
     private void OnDestroy()
     {
-        if (instance == this)
+        if (Instance == this)
         {
-            instance = null;
+            Instance = null;
         }
     }
     #endregion
@@ -37,8 +37,6 @@ public class MainManager : MonoBehaviour
     
     public bool canPause;
 
-   
-    
     
     private void Start()
     {

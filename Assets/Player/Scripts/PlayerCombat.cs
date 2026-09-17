@@ -11,7 +11,7 @@ public class PlayerCombat : MonoBehaviour
 
     [Header("Ataque cuerpo a cuerpo")]
     public float meleeRange = 1.2f;
-    public float meleeDamage = 10f;
+    public int meleeDamage = 10;
     public float meleeCooldown = 0.4f;
     public LayerMask enemyLayer;
 
@@ -24,7 +24,7 @@ public class PlayerCombat : MonoBehaviour
     private float lastProjectileTime = -999f;
 
     // Cuando está en false (ej. tienda abierta, diálogo, cinemática), el jugador no puede atacar ni disparar.
-    public bool CanAttack { get; private set; } = true;
+    
 
     void Awake()
     {
@@ -33,12 +33,12 @@ public class PlayerCombat : MonoBehaviour
 
     public void SetCombatEnabled(bool enabled)
     {
-        CanAttack = enabled;
+        PlayerManager.Instance.canAttack = enabled;
     }
 
     void Update()
     {
-        if (!CanAttack) return;
+        if (!PlayerManager.Instance.canAttack) return;
         if (Mouse.current == null) return;
 
         // Click izquierdo = ataque cuerpo a cuerpo (ataque principal del juego)
