@@ -14,6 +14,11 @@ public class Projectile : MonoBehaviour
     [Header("Prefab generado al impactar")]
     [SerializeField] private GameObject gummyPrefab;
 
+    [Header("Rebote entre enemigos")]
+    private int maxBounces;
+    [SerializeField] private LayerMask enemyLayer;
+    [SerializeField, Min(0f)] private float bounceSearchRadius = 10f;
+
     [Header("Referencias")]
     private GameManager gameManager;
     private Rigidbody rb;
@@ -24,6 +29,8 @@ public class Projectile : MonoBehaviour
     private bool spawnToGround;
     private bool isSpawningInGround;
     private float groundSpawnTimer;
+    private float projectileSpeed;
+    private int bouncesDone;
 
     [Header("Estado de pausa")]
     private Vector3 velocityBeforePause;
@@ -34,6 +41,7 @@ public class Projectile : MonoBehaviour
 
     void Awake()
     {
+
         rb = GetComponent<Rigidbody>();
         projectileCollider = GetComponent<Collider>();
         rb.useGravity = false; // el proyectil viaja recto; actívalo si quieres que caiga por gravedad
@@ -41,6 +49,9 @@ public class Projectile : MonoBehaviour
         spawnToGround = false;
         groundSpawnTimer = 0;
         initPosition = transform.position;
+
+        bouncesDone = 0;
+        maxBounces = PlayerManager.Instance.gummyBounces;
     }
 
     private void Start()
@@ -96,6 +107,7 @@ public class Projectile : MonoBehaviour
     public void Launch(Vector3 direction, float speed)
     {
         // Nota: en Unity 6 es "linearVelocity"; en versiones anteriores usa "velocity"
+        projectileSpeed = speed;
         Vector3 launchVelocity = direction.normalized * speed;
 
         if (isGamePaused)
@@ -106,17 +118,50 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) return; // ignora al propio jugador
+        if (isSpawningInGround || other.CompareTag("Player")) return; // ignora al propio jugador
 
         var damageable = other.GetComponent<IDamageable>();
-        if (damageable != null)
-        {
-            // CUANDO GOLPEE AL ENEMIGO
-            damageable.TakeDamage(damage);
+        if (damageable == null) return;
 
-            // LA GOMITA DEBE CAER EN EL LUGAR DE IMPACTO
-            spawnToGround = true;
+        damageable.TakeDamage(damage);
+
+        // Solo se excluye al enemigo recién golpeado. Así puede rebotar A -> B -> A.
+        if (bouncesDone < maxBounces && TryBounceToClosestEnemy(other))
+        {
+            bouncesDone++;
+            return;
         }
+
+        // Si no quedan rebotes o no hay otro enemigo al alcance, termina el proyectil.
+        spawnToGround = true;
+    }
+
+    private bool TryBounceToClosestEnemy(Collider enemyJustHit)
+    {
+        Collider[] enemies = Physics.OverlapSphere(transform.position, bounceSearchRadius, enemyLayer);
+        Collider closestEnemy = null;
+        float closestDistanceSqr = float.MaxValue;
+
+        foreach (Collider enemy in enemies)
+        {
+            if (enemy == enemyJustHit || enemy.GetComponent<IDamageable>() == null) continue;
+
+            float distanceSqr = (enemy.bounds.center - transform.position).sqrMagnitude;
+            if (distanceSqr < closestDistanceSqr)
+            {
+                closestDistanceSqr = distanceSqr;
+                closestEnemy = enemy;
+            }
+        }
+
+        if (closestEnemy == null) return false;
+
+        Vector3 bounceDirection = closestEnemy.bounds.center - transform.position;
+        if (bounceDirection.sqrMagnitude < 0.0001f) return false;
+
+        transform.rotation = Quaternion.LookRotation(bounceDirection, Vector3.up);
+        Launch(bounceDirection, projectileSpeed);
+        return true;
     }
 
     public void SpawnInGround() 
