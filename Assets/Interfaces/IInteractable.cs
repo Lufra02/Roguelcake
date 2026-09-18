@@ -4,9 +4,6 @@ using UnityEngine;
 // debe implementar esta interfaz.
 public interface IInteractable
 {
-    // Texto opcional para mostrar en la UI ("Presiona E para abrir la tienda")
-    string InteractionPrompt { get; }
-
     // Se llama cuando el jugador interactúa. "interactor" es el GameObject del jugador.
     void Interact(GameObject interactor);
 }

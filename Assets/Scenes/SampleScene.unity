@@ -1403,6 +1403,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 525847285}
   m_CullTransparentMesh: 1
+--- !u!224 &537605183 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+  m_PrefabInstance: {fileID: 6875573628979119507}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1579,6 +1584,7 @@ RectTransform:
   m_Children:
   - {fileID: 525847286}
   - {fileID: 1463387686}
+  - {fileID: 537605183}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2061,6 +2067,18 @@ MonoBehaviour:
   shopCanvas: {fileID: 1463387685}
   playerController: {fileID: 408529398}
   playerCombat: {fileID: 408529397}
+  cardButtons: []
+  cardDefinitions:
+  - {fileID: 11400000, guid: 483f017dfb82f9a4783193dd30311dda, type: 2}
+  - {fileID: 11400000, guid: 73cbbaf2bb42fbe4fad5d5cd45352480, type: 2}
+  - {fileID: 11400000, guid: 1d28935d086642f2b70f7b218db043da, type: 2}
+  - {fileID: 11400000, guid: d26e59778a7950645a6e8766f51acfe6, type: 2}
+  cardViewPrefab: {fileID: 6522711155046958620, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+  cardColor: {r: 0.50487196, g: 1, b: 0, a: 1}
+  disabledCardColor: {r: 0.16, g: 0.16, b: 0.16, a: 1}
+  cardHeight: 800
+  cardSpacing: 10
+  panelPadding: 25
 --- !u!136 &2075561687
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2156,6 +2174,107 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &6875573628979119507
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1372414068}
+    m_Modifications:
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -7.9624
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -14.185
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1730626613595767218, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4091201487121163457, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_Name
+      value: CardView
+      objectReference: {fileID: 0}
+    - target: {fileID: 4091201487121163457, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -32,6 +32,8 @@ public class PlayerHealth : Health
 
     public void RestoreHealth(int amount) => Heal(amount);
 
+    public void SetMaximumHealth(int amount) => SetMaxHealth(amount);
+
     public override void TakeDamage(int dmg)
     {
         base.TakeDamage(dmg);

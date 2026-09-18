@@ -26,4 +26,37 @@ public class PlayerStats : MonoBehaviour
 
     public float PhysicalAttackCooldown => 1f / (physicalAttackRate * attackSpeedMultiplier);
     public float ShootingCooldown => 1f / (shootingRate * attackSpeedMultiplier);
+
+    // Health System
+    public void AddMaxHealth(int amount)
+    {
+        if (amount <= 0) return;
+
+        maxHealth += amount;
+        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+            playerHealth.SetMaximumHealth(maxHealth);
+    }
+
+    // Meele Attacks
+    public void AddMaxMeeleDmg(int amount)
+    {
+        if (amount <= 0) return;
+        physicalDamage += amount;
+    }
+
+    public void AddMeeleRange(int amount)
+    {
+        if (amount <= 0) return;
+        physicalAttackSize += amount;
+    }
+
+    // Range Attacks
+    public void AddProjectileDamage(int amount)
+    {
+        if(amount <= 0) return;
+        shootingDamage += amount;
+    }
+    
+    
 }
