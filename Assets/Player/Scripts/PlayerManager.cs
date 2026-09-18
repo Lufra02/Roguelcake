@@ -29,8 +29,6 @@ public class PlayerManager : MonoBehaviour
     public bool canAttack = true;
     public bool isDead = false;
     public bool isPaused = false;
-    [Min(0)] public int gummyBounces;
-    public int healthForGummies = 10;
 
     // La interfaz abierta tiene prioridad sobre los controles generales del juego.
     private ShopInteractable openShop;

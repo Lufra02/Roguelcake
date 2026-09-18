@@ -771,6 +771,7 @@ GameObject:
   - component: {fileID: 408529400}
   - component: {fileID: 408529399}
   - component: {fileID: 408529405}
+  - component: {fileID: 408529407}
   - component: {fileID: 408529398}
   - component: {fileID: 408529397}
   - component: {fileID: 408529404}
@@ -794,18 +795,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83d897e0aa9fcba4b802278e6a503d22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
-  playerController: {fileID: 0}
   aimPoint: {fileID: 968841573}
-  meleeRange: 2
-  meleeDamage: 10
-  meleeCooldown: 0.4
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
   projectilePrefab: {fileID: 572309923354747639, guid: 3f5da33c954103b459ff2be6827a2250, type: 3}
-  projectileSpeed: 12
-  projectileCooldown: 0.6
-  damagePerShoot: 7
 --- !u!114 &408529398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -818,7 +812,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8332fc78a97e0e4d9e797c00b5cbfab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  moveSpeed: 6
   mainCamera: {fileID: 330585545}
   modelRotationOffset: -90
 --- !u!54 &408529399
@@ -982,8 +975,6 @@ MonoBehaviour:
   canAttack: 1
   isDead: 0
   isPaused: 0
-  gummyBounces: 0
-  healthForGummies: 10
 --- !u!114 &408529406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -996,8 +987,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a178b778421617847b5d35192564fce2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  maxHealth: 100
+  maxHealth: 0
   currentHealth: 0
+--- !u!114 &408529407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408529396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e14aa1f116464847805ffb900c4b518, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  maxHealth: 100
+  healthRegenerationPerSecond: 0
+  gummyHealAmount: 10
+  movementSpeed: 6
+  attackSpeedMultiplier: 1
+  physicalAttackRate: 2.5
+  shootingRate: 1.67
+  physicalDamage: 10
+  physicalAttackSize: 1.2
+  shootingDamage: 7
+  projectileSpeed: 12
+  projectileBounces: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

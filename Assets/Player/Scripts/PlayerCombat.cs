@@ -3,30 +3,27 @@ using UnityEngine.InputSystem;
 
 // Maneja el ataque cuerpo a cuerpo (principal) y el disparo de proyectil (secundario) en 3D.
 // Usa el paquete nuevo "Input System" (Mouse.current).
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerCombat : MonoBehaviour
 {
     [Header("Referencias")]
     private PlayerManager playerManager;
-    public PlayerController playerController;
-    public Transform aimPoint; // Objeto vacío, hijo del jugador, colocado un poco delante de él (usado como punto de disparo)
+    private PlayerStats stats;
+    private PlayerController playerController;
+    [SerializeField] private Transform aimPoint; // Objeto vacío, hijo del jugador, colocado un poco delante de él (usado como punto de disparo)
 
     [Header("Ataque cuerpo a cuerpo")]
-    public float meleeRange = 1.2f;
-    public int meleeDamage = 10;
-    public float meleeCooldown = 0.4f;
-    public LayerMask enemyLayer;
+    [SerializeField] private LayerMask enemyLayer;
 
     [Header("Proyectil")]
-    public GameObject projectilePrefab;
-    public float projectileSpeed = 12f;
-    public float projectileCooldown = 0.6f;
+    [SerializeField] private GameObject projectilePrefab;
     private float lastMeleeTime = -999f;
     private float lastProjectileTime = -999f;
-    public int damagePerShoot = 7;
     
     void Awake()
     {
         if (playerController == null) playerController = GetComponent<PlayerController>();
+        stats = GetComponent<PlayerStats>();
     }
 
     private void Start()
@@ -45,13 +42,16 @@ public class PlayerCombat : MonoBehaviour
         if (Mouse.current == null) return;
 
         // Click izquierdo = ataque cuerpo a cuerpo (ataque principal del juego)
-        if (Mouse.current.leftButton.wasPressedThisFrame && Time.time >= lastMeleeTime + meleeCooldown)
+        float currentMeleeCooldown = stats.PhysicalAttackCooldown;
+        float currentProjectileCooldown = stats.ShootingCooldown;
+
+        if (Mouse.current.leftButton.wasPressedThisFrame && Time.time >= lastMeleeTime + currentMeleeCooldown)
         {
             MeleeAttack();
         }
 
         // Click derecho = disparo de proyectil (ataque secundario)
-        if (Mouse.current.rightButton.wasPressedThisFrame && Time.time >= lastProjectileTime + projectileCooldown)
+        if (Mouse.current.rightButton.wasPressedThisFrame && Time.time >= lastProjectileTime + currentProjectileCooldown)
         {
             ShootProjectile();
         }
@@ -62,15 +62,16 @@ public class PlayerCombat : MonoBehaviour
         lastMeleeTime = Time.time;
 
         Vector3 aimDir = playerController.GetAimDirection();
-        Vector3 hitCenter = transform.position + aimDir * (meleeRange * 0.5f);
+        float physicalAttackSize = stats.physicalAttackSize;
+        Vector3 hitCenter = transform.position + aimDir * (physicalAttackSize * 0.5f);
 
-        Collider[] hits = Physics.OverlapSphere(hitCenter, meleeRange * 0.5f, enemyLayer);
+        Collider[] hits = Physics.OverlapSphere(hitCenter, physicalAttackSize * 0.5f, enemyLayer);
         foreach (Collider hit in hits)
         {
             var damageable = hit.GetComponent<IDamageable>();
             if (damageable != null)
             {
-                damageable.TakeDamage(meleeDamage);
+                damageable.TakeDamage(stats.physicalDamage);
             }
         }
     }
@@ -78,9 +79,10 @@ public class PlayerCombat : MonoBehaviour
     void ShootProjectile()
     {
         if (projectilePrefab == null) return;
-        if (playerManager.playerHealth.currentHealth <= damagePerShoot) return;
+        int currentShootDamage = stats.shootingDamage;
+        if (playerManager.playerHealth.CurrentHealth <= currentShootDamage) return;
 
-        playerManager.playerHealth.TakeDamage(damagePerShoot);
+        playerManager.playerHealth.TakeDamage(currentShootDamage);
 
         lastProjectileTime = Time.time;
 
@@ -98,7 +100,8 @@ public class PlayerCombat : MonoBehaviour
         Projectile projScript = proj.GetComponent<Projectile>();
         if (projScript != null)
         {
-            projScript.Launch(aimDir, projectileSpeed);
+            projScript.Configure(currentShootDamage, stats.projectileBounces);
+            projScript.Launch(aimDir, stats.projectileSpeed);
         }
     }
 
@@ -108,7 +111,8 @@ public class PlayerCombat : MonoBehaviour
         if (playerController == null) return;
         Gizmos.color = Color.red;
         Vector3 aimDir = Application.isPlaying ? playerController.GetAimDirection() : transform.forward;
-        Vector3 hitCenter = transform.position + aimDir * (meleeRange * 0.5f);
-        Gizmos.DrawWireSphere(hitCenter, meleeRange * 0.5f);
+        float physicalAttackSize = stats != null ? stats.physicalAttackSize : 1.2f;
+        Vector3 hitCenter = transform.position + aimDir * (physicalAttackSize * 0.5f);
+        Gizmos.DrawWireSphere(hitCenter, physicalAttackSize * 0.5f);
     }
 }

@@ -4,12 +4,9 @@ using UnityEngine.InputSystem;
 // Controla el movimiento con WASD (plano XZ) y la rotación del jugador hacia el mouse en 3D.
 // Usa el paquete nuevo "Input System" (Keyboard.current / Mouse.current).
 // Requiere Rigidbody con Use Gravity = true (o false si tu juego no tiene caída).
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(PlayerStats))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movimiento")]
-    public float moveSpeed = 6f;
-
     [Header("Apuntado")]
     public Camera mainCamera;
 
@@ -18,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public float modelRotationOffset = 0f;
 
     private Rigidbody rb;
+    private PlayerStats stats;
     private Vector3 moveInput;
     private Vector3 mouseWorldPosition;
 
@@ -25,6 +23,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        stats = GetComponent<PlayerStats>();
         if (mainCamera == null) mainCamera = Camera.main;
 
         // El jugador rota manualmente en Y hacia el mouse; evitamos que la física lo vuelque
@@ -81,7 +80,7 @@ public class PlayerController : MonoBehaviour
     {
         // Nota: en Unity 6 el Rigidbody usa "linearVelocity".
         // Si tu proyecto usa una versión anterior, cambia esta línea por: rb.velocity = ...
-        Vector3 targetVelocity = moveInput * moveSpeed;
+        Vector3 targetVelocity = moveInput * stats.movementSpeed;
         targetVelocity.y = rb.linearVelocity.y; // conserva la velocidad vertical (gravedad, saltos, etc.)
         rb.linearVelocity = targetVelocity;
     }

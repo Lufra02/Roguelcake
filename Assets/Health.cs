@@ -3,8 +3,11 @@ using UnityEngine;
 public class Health : MonoBehaviour, IDamageable
 {
 
-    public int maxHealth;
-    public int currentHealth;
+    [SerializeField, Min(1)] private int maxHealth = 100;
+    [SerializeField] private int currentHealth;
+
+    public int MaxHealth => maxHealth;
+    public int CurrentHealth => currentHealth;
 
     void Start()
     {
@@ -12,8 +15,19 @@ public class Health : MonoBehaviour, IDamageable
     }
 
     public virtual void TakeDamage(int dmg) { 
-       
-        currentHealth -= dmg;
+        currentHealth = Mathf.Clamp(currentHealth - dmg, 0, maxHealth);
+    }
+
+    public virtual void Heal(int amount)
+    {
+        if (amount <= 0) return;
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+    }
+
+    protected void SetMaxHealth(int value)
+    {
+        maxHealth = Mathf.Max(1, value);
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
     }
 
     public virtual void Die() { }

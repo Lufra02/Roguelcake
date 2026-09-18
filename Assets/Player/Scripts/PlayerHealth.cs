@@ -1,17 +1,41 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerHealth : Health
 {
+    private PlayerStats stats;
+    private float regenerationAccumulator;
+
+    private void Awake()
+    {
+        stats = GetComponent<PlayerStats>();
+        if (stats != null)
+            SetMaxHealth(stats.maxHealth);
+    }
+
+    private void Update()
+    {
+        if (stats == null || stats.healthRegenerationPerSecond <= 0f || CurrentHealth >= MaxHealth) return;
+
+        regenerationAccumulator += stats.healthRegenerationPerSecond * Time.deltaTime;
+        int healthToRestore = Mathf.FloorToInt(regenerationAccumulator);
+        if (healthToRestore <= 0) return;
+
+        Heal(healthToRestore);
+        regenerationAccumulator -= healthToRestore;
+    }
 
     public void GetHealthBack() 
     {
-        currentHealth += PlayerManager.Instance.healthForGummies;
+        Heal(stats.gummyHealAmount);
     }
+
+    public void RestoreHealth(int amount) => Heal(amount);
 
     public override void TakeDamage(int dmg)
     {
         base.TakeDamage(dmg);
-        if (currentHealth <= 0) 
+        if (CurrentHealth <= 0) 
         {
             Die();
         }
