@@ -22,23 +22,15 @@ public class ShopCardButton : MonoBehaviour
         if (purchaseButton == null)
             purchaseButton = GetComponent<Button>();
 
+        if (purchaseButton != null)
+            purchaseButton.onClick.AddListener(Purchase);
+
         RefreshView();
     }
 
     public void SetPlayer(PlayerStats stats)
     {
         playerStats = stats;
-    }
-
-    public void Configure(ShopCard assignedCard, TMP_Text title, Image image, TMP_Text cost, TMP_Text description, Button button)
-    {
-        card = assignedCard;
-        titleText = title;
-        imageDisplay = image;
-        costText = cost;
-        descriptionText = description;
-        purchaseButton = button;
-        RefreshView();
     }
 
     public void SetCard(ShopCard assignedCard)
@@ -48,28 +40,6 @@ public class ShopCardButton : MonoBehaviour
         RefreshView();
     }
 
-    public void ApplyColors(Color normalColor, Color disabledColor)
-    {
-        if (purchaseButton == null)
-            purchaseButton = GetComponent<Button>();
-
-        Image background = GetComponent<Image>();
-        if (background != null)
-            background.color = normalColor;
-
-        if (purchaseButton == null) return;
-
-        ColorBlock buttonColors = purchaseButton.colors;
-        buttonColors.normalColor = normalColor;
-        buttonColors.highlightedColor = Color.Lerp(normalColor, Color.white, 0.18f);
-        buttonColors.pressedColor = Color.Lerp(normalColor, Color.black, 0.2f);
-        buttonColors.selectedColor = buttonColors.highlightedColor;
-        buttonColors.disabledColor = disabledColor;
-        buttonColors.colorMultiplier = 1f;
-        purchaseButton.colors = buttonColors;
-    }
-
-    // Asígnalo al evento OnClick del botón de compra.
     public void Purchase()
     {
         if (purchased || card == null || playerStats == null) return;
