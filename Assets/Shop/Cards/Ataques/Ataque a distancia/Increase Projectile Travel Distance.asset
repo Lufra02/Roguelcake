@@ -17,5 +17,5 @@ MonoBehaviour:
   cost: 25
   description: Incrementa distancia de viaje en el proyectil
   effect: 12
-  effectValue: 10
+  effectValue: 5
   effectValueDecimal: 0.3

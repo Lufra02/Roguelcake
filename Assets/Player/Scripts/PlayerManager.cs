@@ -23,12 +23,14 @@ public class PlayerManager : MonoBehaviour
     [HideInInspector] public PlayerCombat playerCombat;
     [HideInInspector] public PlayerController playerController;
     [HideInInspector] public PlayerInteraction playerInteraction;
+    [HideInInspector] public PlayerStats playerStats;
 
     // FLAGS
     public bool canMove = true;
     public bool canAttack = true;
     public bool isDead = false;
     public bool isPaused = false;
+    public bool isInShop = false;
 
     // La interfaz abierta tiene prioridad sobre los controles generales del juego.
     private ShopInteractable openShop;
@@ -40,6 +42,7 @@ public class PlayerManager : MonoBehaviour
         playerHealth = GetComponent<PlayerHealth>();
         playerCombat = GetComponent<PlayerCombat>();
         playerController = GetComponent<PlayerController>();
+        playerStats = GetComponent<PlayerStats>();
 
         gameManager = GameManager.Instance;
         if (gameManager != null)
@@ -48,17 +51,16 @@ public class PlayerManager : MonoBehaviour
         }
 
     }
-
-
+    
     private void Update()
     {
+        
+        if(openShop != null) return;
+        
         // wasPressedThisFrame solo es verdadero en el frame donde comienza la pulsación.
         if (gameManager != null && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            if (openShop != null)
-                openShop.CloseShop();
-            else
-                gameManager.PauseGame();
+            gameManager.PauseGame();
         }
     }
 
@@ -83,12 +85,14 @@ public class PlayerManager : MonoBehaviour
             canAttack = false;
         }
         else { 
-            canMove = true;
-            canAttack = true;
+            canMove = !isInShop;
+            canAttack = !isInShop;
         }
+        
+        playerController?.SetMovementEnabled(canMove);
+        playerCombat?.SetCombatEnabled(canAttack);
     }
-
-
+    
     private void OnDestroy()
     {
         if (gameManager != null)

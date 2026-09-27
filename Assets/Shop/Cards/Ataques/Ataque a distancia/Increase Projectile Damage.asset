@@ -17,4 +17,5 @@ MonoBehaviour:
   cost: 25
   description: Incrementa el damage en el proyectil
   effect: 2
-  effectValue: 10
+  effectValue: 5
+  effectValueDecimal: 0.3

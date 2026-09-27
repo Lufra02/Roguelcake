@@ -34,7 +34,8 @@ public class GameManager : MonoBehaviour
 
     public GameState gameState;
     public Action<GameState> onChangeGameState;
-    
+
+    public GameObject pausePanel;
     public bool canPause;
 
     
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
     {
         gameState = GameState.Play;
         canPause = true;
+        pausePanel.SetActive(false);
     }
 
     public void PauseGame()
@@ -51,10 +53,12 @@ public class GameManager : MonoBehaviour
             if (gameState == GameState.Pause)
             {
                 ChangeGameState(GameState.Play);
+                pausePanel.SetActive(false);
             }
             else if (gameState == GameState.Play)
             {
                 ChangeGameState(GameState.Pause);
+                pausePanel.SetActive(true);
             }
         }
     }
