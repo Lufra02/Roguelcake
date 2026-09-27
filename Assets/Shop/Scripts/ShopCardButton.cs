@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +17,10 @@ public class ShopCardButton : MonoBehaviour
 
     private PlayerStats playerStats;
     private bool purchased;
+    
+    // Se dispara cuando ESTA carta se compra con éxito.
+    // La tienda lo usa para, por ejemplo, cerrarse sola tras una recompensa de nivel.
+    public event Action<ShopCardButton> OnPurchased;
 
     private void Awake()
     {
@@ -46,6 +51,11 @@ public class ShopCardButton : MonoBehaviour
 
         purchased = card.ApplyTo(playerStats);
         RefreshView();
+        
+        if (purchased)
+        {
+            OnPurchased?.Invoke(this);
+        }
     }
 
     private void RefreshView()

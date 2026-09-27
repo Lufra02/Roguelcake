@@ -1,8 +1,29 @@
 using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerStats : MonoBehaviour
 {
+
+    [Header("Nivel")] 
+    public int currentLevel;
+    public int currentXP;
+    public int requiredXP;
+    
+    [SerializeField] TextMeshProUGUI levelText;
+    [SerializeField] TextMeshProUGUI currentExpText;
+    [SerializeField] Slider expSlider; 
+    
+    [Tooltip("XP necesaria para pasar del nivel 1 al 2. Base de la curva de progresión.")]
+    [SerializeField, Min(1)] private int baseXPRequirement = 100;
+    [Tooltip("Cuánto crece la XP requerida por cada nivel. 1.15 = 15% más por nivel que el anterior.")]
+    [SerializeField, Min(1f)] private float xpGrowthRate = 1.15f;
+    
+    [Tooltip("La misma tienda que usas para caminar y comprar. Se abre sola al subir de nivel.")]
+    [SerializeField] private ShopInteractable levelUpShop;
+    
+    
     [Header("Supervivencia")]
     [Min(1)] public int maxHealth = 100;
     [Min(0f)] public float healthRegenerationPerSecond = 0f;
@@ -42,7 +63,76 @@ public class PlayerStats : MonoBehaviour
     private void Start()
     {
         playerManager = PlayerManager.Instance;
+        currentLevel = 1;
+        currentXP = 0;
+        requiredXP = CalculateRequiredXP(currentLevel);
+        RefreshExpUI();
+        levelText.text = "Nivel " + currentLevel;
     }
+
+    public bool addXP = false;
+    public bool addLevel = false;
+    private void Update()
+    {
+        if (addXP)
+        {
+            addXP = false;
+            AddXP(25);
+        }
+        
+        if (addLevel)
+        {
+            addLevel = false;
+            LevelUp();
+        }
+    }
+
+    // Progresión de nivel
+    public void AddXP(int amount)
+    {
+        if (amount <= 0) return;
+ 
+        currentXP += amount;
+        
+        // Implementacion en UI
+        RefreshExpUI();
+
+        if (currentXP >= requiredXP)
+        {
+            LevelUp();
+        }
+    }
+ 
+    private void LevelUp()
+    {
+        currentLevel++;
+        currentXP = 0;
+        requiredXP = CalculateRequiredXP(currentLevel);
+        
+        // INTEGRAR LA TIENDA DE EXP
+        // Abre la tienda para elegir una mejora; se cierra sola en cuanto se compre una carta.
+        levelUpShop?.OpenForLevelUp(gameObject);
+        
+        // Implementacion en UI
+        RefreshExpUI();
+        levelText.text = "Nivel " + currentLevel;   
+    }
+ 
+    // XP necesaria para pasar del nivel actual al siguiente. Crece de forma exponencial,
+    // así que nunca queda "fija": cada nivel exige más que el anterior.
+    private int CalculateRequiredXP(int level)
+    {
+        return Mathf.RoundToInt(baseXPRequirement * Mathf.Pow(xpGrowthRate, level - 1));
+    }
+
+    public void RefreshExpUI()
+    {
+        currentExpText.text = currentXP + " / " + requiredXP;
+        expSlider.value = currentXP;
+        expSlider.maxValue = requiredXP;
+    }
+    
+    
 
     // Health System
     public void AddMaxHealth(int amount)

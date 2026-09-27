@@ -18,6 +18,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
     [SerializeField] private PlayerCombat playerCombat;
     
     private bool isOpen;
+    private bool closeOnPurchase;
     private PlayerManager playerManager;
 
     public void Interact(GameObject interactor)
@@ -25,21 +26,30 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         if (isOpen)
             CloseShop();
         else
-            OpenShop(interactor);
+            OpenShop(interactor, closeShopOnPurchase: false);
+    }
+    
+    // Apertura de tienda desde subida de nivel
+    public void OpenForLevelUp(GameObject interactor)
+    {
+        if (isOpen) return;
+        OpenShop(interactor, closeShopOnPurchase: true);
     }
 
-    private void OpenShop(GameObject interactor)
+    private void OpenShop(GameObject interactor, bool closeShopOnPurchase)
     {
         isOpen = true;
+        closeOnPurchase = closeShopOnPurchase;
+ 
         playerController ??= interactor.GetComponent<PlayerController>();
         playerCombat ??= interactor.GetComponent<PlayerCombat>();
         playerManager = interactor.GetComponent<PlayerManager>();
         playerManager?.SetOpenShop(this);
-
+ 
         AssignCardsToButtons(interactor.GetComponent<PlayerStats>());
         playerController?.SetMovementEnabled(false);
         playerCombat?.SetCombatEnabled(false);
-
+ 
         if (shopCanvas != null)
             shopCanvas.SetActive(true);
     }
@@ -56,6 +66,14 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         playerController?.SetMovementEnabled(true);
         playerCombat?.SetCombatEnabled(true);
     }
+    // Para cerrar la tienda despues de la toma de una carta
+    private void HandleCardPurchased(ShopCardButton button)
+    {
+        if (closeOnPurchase)
+        {
+            CloseShop();
+        }
+    }
     
     // Solo reparte datos entre los botones que ya existen en la escena; no instancia nada.
     private void AssignCardsToButtons(PlayerStats playerStats)
@@ -69,11 +87,14 @@ public class ShopInteractable : MonoBehaviour, IInteractable
             ShopCardButton button = shopCardButtons[i];
             if (button == null) continue;
  
+            button.OnPurchased -= HandleCardPurchased;
+            
             if (i < selectedCards.Count)
             {
                 button.gameObject.SetActive(true);
                 button.SetCard(selectedCards[i]);
                 button.SetPlayer(playerStats);
+                button.OnPurchased += HandleCardPurchased;
             }
             else
             {
@@ -101,8 +122,6 @@ public class ShopInteractable : MonoBehaviour, IInteractable
             selectedCards.Add(availableCards[randomIndex]);
             availableCards.RemoveAt(randomIndex);
         }
- 
-        print(selectedCards);
         return selectedCards;
     }
 
