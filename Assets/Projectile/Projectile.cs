@@ -8,8 +8,8 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [Header("Configuracion del proyectil")]
-    [SerializeField] private int damage = 5;
-    [SerializeField] private int maxTravelDistance = 15;
+    private int damage = 5;
+    private int maxTravelDistance = 15;
 
     [Header("Prefab generado al impactar")]
     [SerializeField] private GameObject gummyPrefab;
@@ -117,10 +117,11 @@ public class Projectile : MonoBehaviour
     }
 
     // PlayerCombat lo llama al crear el proyectil para aplicar las estadísticas actuales.
-    public void Configure(int newDamage, int newMaxBounces)
+    public void Configure(int newDamage, int newMaxBounces, int newMaxTravelDistance)
     {
         damage = Mathf.Max(0, newDamage);
         maxBounces = Mathf.Max(0, newMaxBounces);
+        maxTravelDistance = Mathf.Max(0, newMaxTravelDistance);
     }
 
     void OnTriggerEnter(Collider other)

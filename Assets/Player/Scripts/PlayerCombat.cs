@@ -100,7 +100,7 @@ public class PlayerCombat : MonoBehaviour
         Projectile projScript = proj.GetComponent<Projectile>();
         if (projScript != null)
         {
-            projScript.Configure(currentShootDamage, stats.projectileBounces);
+            projScript.Configure(currentShootDamage, stats.projectileBounces, stats.maxTravelDistance);
             projScript.Launch(aimDir, stats.projectileSpeed);
         }
     }
