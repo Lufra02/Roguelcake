@@ -4,22 +4,19 @@ using UnityEngine;
 // Colócalo en el GameObject de la tienda, junto con un Collider en la capa Interactable.
 public class ShopInteractable : MonoBehaviour, IInteractable
 {
-    public string InteractionPrompt => "Presiona E para abrir la tienda";
 
     [Header("UI")]
     [SerializeField] private GameObject shopCanvas;
-    [Tooltip("Objeto padre donde se instancian las tarjetas. Su layout se configura desde el editor.")]
-    [SerializeField] private Transform cardContainer;
-    [SerializeField] private ShopCardButton cardViewPrefab;
-
+    [Tooltip("Lista de los objetos de las tarjetas")]
+    [SerializeField] private ShopCardButton[] shopCardButtons;
+    
     [Header("Tarjetas disponibles")]
     [SerializeField] private ShopCard[] cardDefinitions;
 
     [Header("Referencias del jugador")]
     [SerializeField] private PlayerController playerController;
     [SerializeField] private PlayerCombat playerCombat;
-
-    private readonly List<ShopCardButton> activeCardViews = new List<ShopCardButton>();
+    
     private bool isOpen;
     private PlayerManager playerManager;
 
@@ -39,7 +36,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         playerManager = interactor.GetComponent<PlayerManager>();
         playerManager?.SetOpenShop(this);
 
-        CreateCardViews(interactor.GetComponent<PlayerStats>());
+        AssignCardsToButtons(interactor.GetComponent<PlayerStats>());
         playerController?.SetMovementEnabled(false);
         playerCombat?.SetCombatEnabled(false);
 
@@ -59,29 +56,34 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         playerController?.SetMovementEnabled(true);
         playerCombat?.SetCombatEnabled(true);
     }
-
-    // Solo selecciona datos e instancia el prefab: el diseño pertenece al prefab y al contenedor.
-    private void CreateCardViews(PlayerStats playerStats)
+    
+    // Solo reparte datos entre los botones que ya existen en la escena; no instancia nada.
+    private void AssignCardsToButtons(PlayerStats playerStats)
     {
-        ClearCardViews();
-
-        if (cardContainer == null || cardViewPrefab == null || cardDefinitions == null)
+        if (shopCardButtons == null || shopCardButtons.Length == 0) return;
+ 
+        List<ShopCard> selectedCards = GetRandomCards(shopCardButtons.Length);
+ 
+        for (int i = 0; i < shopCardButtons.Length; i++)
         {
-            Debug.LogWarning("La tienda necesita Card Container, Card View Prefab y Card Definitions.", this);
-            return;
-        }
-
-        foreach (ShopCard card in GetRandomCards())
-        {
-            ShopCardButton cardView = Instantiate(cardViewPrefab, cardContainer);
-            cardView.name = $"Card - {card.Title}";
-            cardView.SetCard(card);
-            cardView.SetPlayer(playerStats);
-            activeCardViews.Add(cardView);
+            ShopCardButton button = shopCardButtons[i];
+            if (button == null) continue;
+ 
+            if (i < selectedCards.Count)
+            {
+                button.gameObject.SetActive(true);
+                button.SetCard(selectedCards[i]);
+                button.SetPlayer(playerStats);
+            }
+            else
+            {
+                // Hay más botones que cartas disponibles: se ocultan los sobrantes
+                button.gameObject.SetActive(false);
+            }
         }
     }
 
-    private List<ShopCard> GetRandomCards()
+    private List<ShopCard> GetRandomCards(int count)
     {
         List<ShopCard> availableCards = new List<ShopCard>();
         foreach (ShopCard card in cardDefinitions)
@@ -89,28 +91,20 @@ public class ShopInteractable : MonoBehaviour, IInteractable
             if (card != null)
                 availableCards.Add(card);
         }
-
-        int cardCount = Mathf.Min(3, availableCards.Count);
+ 
+        int cardCount = Mathf.Min(count, availableCards.Count);
         List<ShopCard> selectedCards = new List<ShopCard>(cardCount);
-
+ 
         for (int index = 0; index < cardCount; index++)
         {
             int randomIndex = Random.Range(0, availableCards.Count);
             selectedCards.Add(availableCards[randomIndex]);
             availableCards.RemoveAt(randomIndex);
         }
-
+ 
+        print(selectedCards);
         return selectedCards;
     }
 
-    private void ClearCardViews()
-    {
-        foreach (ShopCardButton cardView in activeCardViews)
-        {
-            if (cardView != null)
-                Destroy(cardView.gameObject);
-        }
-
-        activeCardViews.Clear();
-    }
+    
 }
