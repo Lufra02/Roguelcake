@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f5c13cf6a7d42c5a068a1cfb80cd2c1, type: 3}
   m_Name: Increase Projectile Explosive Damange
   m_EditorClassIdentifier: Assembly-CSharp::ShopCard
-  cardTitle: 
+  cardTitle: Explosive Damage
   cardImage: {fileID: 0}
   cost: 0
-  description: 
-  effect: 0
+  description: + Explosion DMG
+  effect: 12
   effectValue: 10
   effectValueDecimal: 0.3
   BounceUpgrade: 0
-  ExplosiveUpgrade: 0
+  ExplosiveUpgrade: 1
+  IsUnlockCard: 0

@@ -16,6 +16,9 @@ MonoBehaviour:
   cardImage: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   cost: 25
   description: Incrementa el damage en el proyectil
-  effect: 2
+  effect: 8
   effectValue: 5
   effectValueDecimal: 0.3
+  BounceUpgrade: 0
+  ExplosiveUpgrade: 0
+  IsUnlockCard: 0

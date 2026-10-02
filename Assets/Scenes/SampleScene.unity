@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDummie
   maxHealth: 30
+  currentHealth: 0
 --- !u!65 &79822267
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -404,6 +405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDummie
   maxHealth: 30
+  currentHealth: 0
 --- !u!65 &186356450
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -803,6 +805,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   mainCamera: {fileID: 330585545}
   modelRotationOffset: -90
+  gamepadDeadZone: 0.15
 --- !u!54 &408529399
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -828,7 +831,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 0
+  m_Constraints: 32
   m_CollisionDetection: 0
 --- !u!136 &408529400
 CapsuleCollider:
@@ -1016,9 +1019,14 @@ MonoBehaviour:
   shootingRate: 1.67
   shootingDamage: 7
   projectileSpeed: 12
-  projectileBounces: 0
   shootingRateCap: 4
   maxTravelDistance: 10
+  bouncyGun: 0
+  explosiveGun: 0
+  hugeGun: 0
+  projectileBounces: 0
+  explosiveDamage: 0
+  explosiveRange: 10
   addXP: 0
   addLevel: 0
 --- !u!1 &410087039
@@ -1274,6 +1282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDummie
   maxHealth: 30
+  currentHealth: 0
 --- !u!1 &523349858
 GameObject:
   m_ObjectHideFlags: 0
@@ -2856,17 +2865,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2075561690}
-  - component: {fileID: 2075561689}
-  - component: {fileID: 2075561688}
-  - component: {fileID: 2075561687}
   - component: {fileID: 2075561686}
   m_Layer: 7
-  m_Name: Shop - NO BORRAR
+  m_Name: SHOP MANAGER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2075561686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2885,92 +2891,25 @@ MonoBehaviour:
   - {fileID: 1616241053}
   - {fileID: 1778400137}
   cardDefinitions:
-  - {fileID: 11400000, guid: 483f017dfb82f9a4783193dd30311dda, type: 2}
+  - {fileID: 11400000, guid: 0e6021d620cd2da4e82ae178927fd4a0, type: 2}
   - {fileID: 11400000, guid: 73cbbaf2bb42fbe4fad5d5cd45352480, type: 2}
-  - {fileID: 11400000, guid: 1d28935d086642f2b70f7b218db043da, type: 2}
+  - {fileID: 11400000, guid: 9ac980cd1ef6fd541b5d21eb976602a6, type: 2}
+  - {fileID: 11400000, guid: a0148443ae07c8847b5ab37055cabb99, type: 2}
+  - {fileID: 11400000, guid: f3ae10e3c0cb9e54aaf52d26288bae86, type: 2}
+  - {fileID: 11400000, guid: 5f2d2e9e4b4bde348b921c4a728b59c9, type: 2}
+  - {fileID: 11400000, guid: b7417b61f7189a64aaa4db7bedeca106, type: 2}
+  - {fileID: 11400000, guid: eaf7f356a08fcc34593705416ae423c0, type: 2}
   - {fileID: 11400000, guid: d26e59778a7950645a6e8766f51acfe6, type: 2}
+  - {fileID: 11400000, guid: 483f017dfb82f9a4783193dd30311dda, type: 2}
+  - {fileID: 11400000, guid: e467f9781f4d3c14185fea5dd50f1213, type: 2}
+  - {fileID: 11400000, guid: 5b6b4e2120166144197583bffc767bf7, type: 2}
+  - {fileID: 11400000, guid: ed11a87b90cde0549a08ddfbe1f8fd0b, type: 2}
+  - {fileID: 11400000, guid: c4604b98e03ca1248b85eedfcb1f0d76, type: 2}
+  - {fileID: 11400000, guid: c88572387aa2df4498c03ba3d3d8d3ad, type: 2}
+  - {fileID: 11400000, guid: 1d28935d086642f2b70f7b218db043da, type: 2}
   playerController: {fileID: 408529398}
   playerCombat: {fileID: 408529397}
---- !u!136 &2075561687
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2075561685}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!23 &2075561688
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2075561685}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &2075561689
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2075561685}
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  navigationCooldown: 0.2
 --- !u!4 &2075561690
 Transform:
   m_ObjectHideFlags: 0
@@ -2980,7 +2919,7 @@ Transform:
   m_GameObject: {fileID: 2075561685}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.42737, y: 0.97, z: -2.86}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3271,6 +3210,10 @@ PrefabInstance:
     - target: {fileID: 4091201487121163457, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_Name
       value: CardView (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7288719373598364614, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: m_fontSize
+      value: 67.15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

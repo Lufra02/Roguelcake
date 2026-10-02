@@ -10,5 +10,7 @@ public class ExperienceParticle : MonoBehaviour
         if (player == null) return;
 
         player.playerStats.AddXP(amountOfExperience);
+        
+        Destroy(gameObject);
     }
 }

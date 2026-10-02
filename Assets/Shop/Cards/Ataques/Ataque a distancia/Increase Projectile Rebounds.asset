@@ -19,3 +19,6 @@ MonoBehaviour:
   effect: 10
   effectValue: 1
   effectValueDecimal: 0.3
+  BounceUpgrade: 1
+  ExplosiveUpgrade: 0
+  IsUnlockCard: 0

@@ -45,13 +45,13 @@ public class PlayerCombat : MonoBehaviour
         float currentMeleeCooldown = stats.PhysicalAttackCooldown;
         float currentProjectileCooldown = stats.ShootingCooldown;
 
-        if (Mouse.current.leftButton.wasPressedThisFrame && Time.time >= lastMeleeTime + currentMeleeCooldown)
+        if ((Mouse.current.leftButton.wasPressedThisFrame || Gamepad.current.rightShoulder.wasPressedThisFrame) && Time.time >= lastMeleeTime + currentMeleeCooldown)
         {
             MeleeAttack();
         }
 
         // Click derecho = disparo de proyectil (ataque secundario)
-        if (Mouse.current.rightButton.wasPressedThisFrame && Time.time >= lastProjectileTime + currentProjectileCooldown)
+        if ((Mouse.current.rightButton.wasPressedThisFrame || Gamepad.current.rightTrigger.wasPressedThisFrame ) && Time.time >= lastProjectileTime + currentProjectileCooldown)
         {
             ShootProjectile();
         }

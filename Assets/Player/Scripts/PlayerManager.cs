@@ -58,7 +58,7 @@ public class PlayerManager : MonoBehaviour
         if(openShop != null) return;
         
         // wasPressedThisFrame solo es verdadero en el frame donde comienza la pulsación.
-        if (gameManager != null && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (gameManager != null && Keyboard.current != null && (Keyboard.current.escapeKey.wasPressedThisFrame || Gamepad.current.startButton.wasPressedThisFrame))
         {
             gameManager.PauseGame();
         }

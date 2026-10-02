@@ -14,6 +14,8 @@ public class ShopCardButton : MonoBehaviour
     [SerializeField] private TMP_Text costText;
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private Button purchaseButton;
+    
+    [SerializeField] private GameObject selectionHighlight;
 
     private PlayerStats playerStats;
     private bool purchased;
@@ -43,6 +45,12 @@ public class ShopCardButton : MonoBehaviour
         card = assignedCard;
         purchased = false;
         RefreshView();
+    }
+    
+    public void SetSelected(bool selected)
+    {
+        if (selectionHighlight != null)
+            selectionHighlight.SetActive(selected);
     }
 
     public void Purchase()

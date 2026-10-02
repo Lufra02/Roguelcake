@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f5c13cf6a7d42c5a068a1cfb80cd2c1, type: 3}
   m_Name: Increase Projectile Explosive Range
   m_EditorClassIdentifier: Assembly-CSharp::ShopCard
-  cardTitle: 
+  cardTitle: Increase explosion radious
   cardImage: {fileID: 0}
   cost: 0
-  description: 
-  effect: 0
-  effectValue: 10
+  description: + Explosive Radious
+  effect: 13
+  effectValue: 3
   effectValueDecimal: 0.3
   BounceUpgrade: 0
   ExplosiveUpgrade: 0
