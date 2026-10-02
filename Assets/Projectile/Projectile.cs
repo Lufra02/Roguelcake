@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 // Proyectil simple: viaja en línea recta en la dirección hacia el mouse
@@ -13,11 +12,24 @@ public class Projectile : MonoBehaviour
 
     [Header("Prefab generado al impactar")]
     [SerializeField] private GameObject gummyPrefab;
+    [SerializeField] private float spawnOffset = 0.5f;
+    
+    [Header("Caída al perder alcance")]
+    [Tooltip("Qué tan rápido se frena la velocidad horizontal una vez que empieza a caer (unidades/seg²). Más alto = frena más rápido.")]
+    [SerializeField, Min(0.1f)] private float horizontalDeceleration = 15f;
+    [Tooltip("Altura Y del suelo en el mundo. Cuando el proyectil cae por debajo de este valor, aterriza. Ajusta esto a la altura real de tu piso.")]
+    [SerializeField] private float groundLevel = 0f;
 
     [Header("Rebote entre enemigos")]
+    private bool isBouncy;
     private int maxBounces;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField, Min(0f)] private float bounceSearchRadius = 10f;
+
+    [Header("Explosion")]
+    private bool isExplosive;
+    private int sizeOfExplosion;
+    private int explosionDamage;
 
     [Header("Referencias")]
     private GameManager gameManager;
@@ -26,9 +38,7 @@ public class Projectile : MonoBehaviour
 
     [Header("Estado del recorrido")]
     private Vector3 initPosition;
-    private bool spawnToGround;
-    private bool isSpawningInGround;
-    private float groundSpawnTimer;
+    private bool isFalling; // true desde que supera maxTravelDistance hasta que aterriza
     private float projectileSpeed;
     private int bouncesDone;
 
@@ -36,18 +46,15 @@ public class Projectile : MonoBehaviour
     private Vector3 velocityBeforePause;
     private bool isGamePaused;
 
-    [Header("Tiempos")]
-    private const float GroundSpawnDelay = 1f;
+    // Evita que la explosión (y la gomita/destrucción que dispara) ocurra más de una vez.
+    private bool hasExploded;
 
     void Awake()
     {
-
         rb = GetComponent<Rigidbody>();
         projectileCollider = GetComponent<Collider>();
-        rb.useGravity = false; // el proyectil viaja recto; actívalo si quieres que caiga por gravedad
+        rb.useGravity = false; // el proyectil viaja recto mientras vuela; se activa sola al caer
 
-        spawnToGround = false;
-        groundSpawnTimer = 0;
         initPosition = transform.position;
 
         bouncesDone = 0;
@@ -70,18 +77,18 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    //Esta es la funcion que quiero que se haga cada vez que pauso o despauso el juego
+    //Esta es la funcion que se hace cada vez que pauso o despauso el juego
     public void OnChangeGameStateCallback(GameState newState)
     {
         isGamePaused = newState == GameState.Pause;
 
         if (isGamePaused)
         {
-            // linearVelocity ya contiene rapidez y dirección.
+            // linearVelocity ya contiene rapidez y dirección (sea volando o cayendo).
             velocityBeforePause = rb.linearVelocity;
             rb.linearVelocity = Vector3.zero;
         }
-        else if (!isSpawningInGround)
+        else
         {
             rb.linearVelocity = velocityBeforePause;
         }
@@ -91,17 +98,15 @@ public class Projectile : MonoBehaviour
     {
         if (isGamePaused) return;
 
-        if (!isSpawningInGround && Vector3.Distance(initPosition, transform.position) > maxTravelDistance)
+        if (!isFalling && !hasExploded && Vector3.Distance(initPosition, transform.position) > maxTravelDistance)
         {
-            spawnToGround = true;
+            StartFalling();
         }
 
-        if (spawnToGround && !isSpawningInGround) {
-            SpawnInGround();
+        if (isFalling)
+        {
+            UpdateFalling();
         }
-
-        if (isSpawningInGround)
-            UpdateGroundSpawn();
     }
 
     public void Launch(Vector3 direction, float speed)
@@ -117,31 +122,46 @@ public class Projectile : MonoBehaviour
     }
 
     // PlayerCombat lo llama al crear el proyectil para aplicar las estadísticas actuales.
-    public void Configure(int newDamage, int newMaxBounces, int newMaxTravelDistance)
+    public void Configure(int newDamage, int newMaxBounces, int newMaxTravelDistance, bool isBouncy_, bool isExplosive_, bool isHugeBullet_, int explosionDamage_, int explosiveRange_)
     {
         damage = Mathf.Max(0, newDamage);
-        maxBounces = Mathf.Max(0, newMaxBounces);
         maxTravelDistance = Mathf.Max(0, newMaxTravelDistance);
+
+        isBouncy = isBouncy_;
+        maxBounces = Mathf.Max(0, newMaxBounces);
+
+        isExplosive = isExplosive_;
+        explosionDamage = (damage + explosionDamage_) / 2;
+        sizeOfExplosion = explosiveRange_;
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (isSpawningInGround || other.CompareTag("Player")) return; // ignora al propio jugador
+        if (isFalling || hasExploded || other.CompareTag("Player")) return; // ignora al propio jugador
 
         var damageable = other.GetComponent<IDamageable>();
         if (damageable == null) return;
 
         damageable.TakeDamage(damage);
 
+        // COMPORTAMIENTOS DE LA BALA DEPENDIENDO DE QUE MEJORA TENGA
+        if (isExplosive)
+        {
+            // Explode() aplica el daño en área, instancia la gomita UNA sola vez y destruye el proyectil.
+            Explode();
+            return;
+        }
+
+        // ---> REBOTE
         // Solo se excluye al enemigo recién golpeado. Así puede rebotar A -> B -> A.
-        if (bouncesDone < maxBounces && TryBounceToClosestEnemy(other))
+        if (isBouncy && bouncesDone < maxBounces && TryBounceToClosestEnemy(other))
         {
             bouncesDone++;
             return;
         }
 
-        // Si no quedan rebotes o no hay otro enemigo al alcance, termina el proyectil.
-        spawnToGround = true;
+        // Si no quedan rebotes o no hay otro enemigo al alcance, empieza a caer.
+        StartFalling();
     }
 
     private bool TryBounceToClosestEnemy(Collider enemyJustHit)
@@ -172,25 +192,68 @@ public class Projectile : MonoBehaviour
         return true;
     }
 
-    public void SpawnInGround() 
+    // Aplica daño en área a todos los enemigos dentro de sizeOfExplosion (incluye al que
+    // ya recibió el golpe directo), instancia la gomita UNA sola vez y destruye el proyectil.
+    private void Explode()
     {
-        if (isSpawningInGround) return;
+        if (hasExploded) return;
+        hasExploded = true;
 
-        isSpawningInGround = true;
+        Collider[] enemiesInBlast = Physics.OverlapSphere(transform.position, sizeOfExplosion, enemyLayer);
 
-        spawnToGround = false;
-        // Detiene el proyectil e impide que haga más daño de inmediato.
-        rb.linearVelocity = Vector3.zero;
-        projectileCollider.enabled = false;
+        foreach (Collider enemy in enemiesInBlast)
+        {
+            var damageable = enemy.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage(explosionDamage);
+            }
+        }
+
+        // TODO: agregar efecto visual/sonido de explosión aquí, además de la gomita.
+        if (gummyPrefab != null)
+            Instantiate(gummyPrefab, transform.position + (Vector3.up * spawnOffset), transform.rotation);
+
+        Destroy(gameObject);
     }
 
-    private void UpdateGroundSpawn()
+    // Empieza la caída: deja de dañar, activa la gravedad real de Unity (que ya da el efecto
+    // de "cae cada vez más rápido") y de ahí en más solo frenamos la velocidad horizontal a mano.
+    private void StartFalling()
     {
-        groundSpawnTimer += Time.deltaTime;
-        if (groundSpawnTimer < GroundSpawnDelay) return;
+        if (isFalling) return;
+        isFalling = true;
+
+        projectileCollider.enabled = false; // ya no debe seguir dañando mientras cae
+        rb.useGravity = true;
+    }
+
+    private void UpdateFalling()
+    {
+        // Frena solo la velocidad horizontal (X/Z); la vertical (Y) la sigue manejando la gravedad.
+        Vector3 velocity = rb.linearVelocity;
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0f, velocity.z);
+        Vector3 dampedHorizontal = Vector3.MoveTowards(horizontalVelocity, Vector3.zero, horizontalDeceleration * Time.deltaTime);
+        rb.linearVelocity = new Vector3(dampedHorizontal.x, velocity.y, dampedHorizontal.z);
+
+        if (transform.position.y <= groundLevel)
+        {
+            Land();
+        }
+    }
+
+    // Toca el suelo: si es explosiva, Explode() ya resuelve todo (daño en área + gomita + destrucción).
+    // Si no, aparece el prefab de inmediato, sin ningún delay.
+    private void Land()
+    {
+        if (isExplosive)
+        {
+            Explode();
+            return;
+        }
 
         if (gummyPrefab != null)
-            Instantiate(gummyPrefab, transform.position, transform.rotation);
+            Instantiate(gummyPrefab, transform.position + (Vector3.up * spawnOffset), transform.rotation);
 
         Destroy(gameObject);
     }
@@ -199,5 +262,18 @@ public class Projectile : MonoBehaviour
     {
         if (gameManager != null)
             gameManager.onChangeGameState -= OnChangeGameStateCallback;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!isExplosive) return;
+
+        // Relleno semitransparente para ver el área cubierta de un vistazo
+        Gizmos.color = new Color(1f, 0.4f, 0f, 0.15f);
+        Gizmos.DrawSphere(transform.position, sizeOfExplosion);
+
+        // Contorno sólido para distinguir el borde exacto del radio
+        Gizmos.color = new Color(1f, 0.4f, 0f, 0.8f);
+        Gizmos.DrawWireSphere(transform.position, sizeOfExplosion);
     }
 }

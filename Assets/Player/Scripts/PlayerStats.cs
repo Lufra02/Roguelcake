@@ -23,7 +23,6 @@ public class PlayerStats : MonoBehaviour
     [Tooltip("La misma tienda que usas para caminar y comprar. Se abre sola al subir de nivel.")]
     [SerializeField] private ShopInteractable levelUpShop;
     
-    
     [Header("Supervivencia")]
     [Min(1)] public int maxHealth = 100;
     [Min(0f)] public float healthRegenerationPerSecond = 0f;
@@ -50,10 +49,23 @@ public class PlayerStats : MonoBehaviour
     [Min(0.01f)] public float shootingRate = 1.67f;
     [Min(0)] public int shootingDamage = 7;
     [Min(0f)] public float projectileSpeed = 12f;
-    [Min(0)] public int projectileBounces = 0;
+    
     [Tooltip("Tope máximo de disparos por segundo, para que no supere la animación/sonido.")]
     [Min(0.01f)] public float shootingRateCap = 4f;
     [Min(10)] public int maxTravelDistance = 10;
+    
+    [Header("Mejoras")] 
+    public bool bouncyGun;
+    public bool explosiveGun;
+    public bool hugeGun;
+    
+    [Header("ARMA DE REBOTE")]
+    [Min(0)] public int projectileBounces = 0;
+
+    [Header("ARMA EXPLOSIVA")] 
+    public int explosiveDamage;
+    public int explosiveRange = 10;
+    
 
     public float PhysicalAttackCooldown => 1f / (physicalAttackRate * attackSpeedMultiplier);
     public float ShootingCooldown => 1f / (shootingRate * attackSpeedMultiplier);
@@ -70,6 +82,7 @@ public class PlayerStats : MonoBehaviour
         levelText.text = "Nivel " + currentLevel;
     }
 
+    // BORRAR EN UN FUTURO
     public bool addXP = false;
     public bool addLevel = false;
     private void Update()
@@ -86,6 +99,7 @@ public class PlayerStats : MonoBehaviour
             LevelUp();
         }
     }
+    // ----------------------------
 
     // Progresión de nivel
     public void AddXP(int amount)
@@ -181,6 +195,13 @@ public class PlayerStats : MonoBehaviour
     {
         if (amount <= 0) return;
         shootingRate = Mathf.Min(shootingRate + amount, shootingRateCap);
+    }
+
+    public void ChangeTypeOfBullet(bool isRebound, bool isExplosive, bool isHugeGun)
+    {
+        bouncyGun = isRebound;
+        explosiveGun = isExplosive;
+        hugeGun = isHugeGun;
     }
     
 }

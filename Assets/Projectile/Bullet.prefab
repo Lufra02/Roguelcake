@@ -153,9 +153,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 963c2b58933c5a849b461d39a8cd15eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  damage: 5
-  maxTravelDistance: 10
   gummyPrefab: {fileID: 943167131446072552, guid: fdd482a28cbf33c448bb49b700ff9792, type: 3}
+  spawnOffset: 0.5
+  horizontalDeceleration: 15
+  groundLevel: 0
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64

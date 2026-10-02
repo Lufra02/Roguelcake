@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyDummie : MonoBehaviour, IDamageable
 {
     public float maxHealth = 30f;
-    private float currentHealth;
+    [SerializeField] private float currentHealth;
  
     void Awake()
     {
