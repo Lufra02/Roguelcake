@@ -85,25 +85,6 @@ public class PlayerStats : MonoBehaviour
         levelText.text = "Nivel " + currentLevel;
     }
 
-    // BORRAR EN UN FUTURO
-    public bool addXP = false;
-    public bool addLevel = false;
-    private void Update()
-    {
-        if (addXP)
-        {
-            addXP = false;
-            AddXP(25);
-        }
-        
-        if (addLevel)
-        {
-            addLevel = false;
-            LevelUp();
-        }
-    }
-    // ----------------------------
-
     // Progresión de nivel
     public void AddXP(int amount)
     {

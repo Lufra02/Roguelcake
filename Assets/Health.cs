@@ -18,6 +18,11 @@ public class Health : MonoBehaviour, IDamageable
         currentHealth -= dmg;
     }
 
+    public void SetHealth(int health)
+    {
+        currentHealth = health;
+    }
+
     public virtual void Heal(int amount)
     {
         if (amount <= 0) return;

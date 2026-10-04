@@ -1257,6 +1257,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a178b778421617847b5d35192564fce2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  gummyPrefab: {fileID: 943167131446072552, guid: fdd482a28cbf33c448bb49b700ff9792, type: 3}
+  horizontalForceMultiplier: 1.7
+  verticalForceMultiplier: 2.2
+  flag: 0
 --- !u!114 &408529407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1300,8 +1304,6 @@ MonoBehaviour:
   explosiveDamage: 0
   explosiveRange: 10
   hugeDamagePercent: 5
-  addXP: 0
-  addLevel: 0
 --- !u!114 &408529408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3713,7 +3715,7 @@ GameObject:
   - component: {fileID: 2064786491}
   - component: {fileID: 2064786490}
   - component: {fileID: 2064786489}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
