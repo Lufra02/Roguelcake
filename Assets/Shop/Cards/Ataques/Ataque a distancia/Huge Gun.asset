@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f5c13cf6a7d42c5a068a1cfb80cd2c1, type: 3}
-  m_Name: Increase Projectile Explosive Range
+  m_Name: Huge Gun
   m_EditorClassIdentifier: Assembly-CSharp::ShopCard
-  cardTitle: Increase explosion radious
-  cardImage: {fileID: 0}
-  cost: 0
-  description: + Explosive Radious
-  effect: 13
-  effectValue: 3
-  effectValueDecimal: 0.3
+  cardTitle: Huge Bullet
+  cardImage: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  cost: 25
+  description: Incrementa los rebotes en el proyectil
+  effect: 16
+  effectValue: 5
+  effectValueDecimal: 0.01
   BounceUpgrade: 0
   ExplosiveUpgrade: 0
-  IsUnlockCard: 0
+  HugeBulletUpgrade: 1
+  IsUnlockCard: 1

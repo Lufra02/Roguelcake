@@ -19,6 +19,8 @@ public enum ShopCardEffect
     // DISTANCE ATTACK
     MaxProjectileDmg,
     IncreaseShootingRate,
+    ProjectileSpped,
+    ProjectileTravelDistance,
     
     // REBOUND GUN
     IncreaseRebounds,
@@ -28,8 +30,11 @@ public enum ShopCardEffect
     ExplosiveDamage,
     ExplosionRadious,
     
-    ProjectileSpped,
-    ProjectileTravelDistance
+    // EXPLOSIVE GUN
+    HugeBulletGun,
+    HugeDamagePercent,
+    HugeDistance
+    
 }
 
 [CreateAssetMenu(fileName = "New Shop Card", menuName = "Roguelcake/Shop Card")]
@@ -55,6 +60,7 @@ public class ShopCard : ScriptableObject
 
     public bool BounceUpgrade;
     public bool ExplosiveUpgrade;
+    public bool HugeBulletUpgrade;
     [Tooltip("Márcalo SOLO en la carta que desbloquea la categoría (Explosive Bullet / Increase Rebound). Las demás mejoras de esa categoría déjalo en false.")]
     public bool IsUnlockCard;
     
@@ -114,7 +120,7 @@ public class ShopCard : ScriptableObject
             // ARMA DE REBOTE
             case ShopCardEffect.IncreaseRebounds:
                 playerStats.projectileBounces += effectValue;
-                if (playerStats.projectileBounces == 1)
+                if (!playerStats.bouncyGun)
                 {
                     playerStats.ChangeTypeOfBullet(true, false, false);
                 }
@@ -131,6 +137,15 @@ public class ShopCard : ScriptableObject
             
             case ShopCardEffect.ExplosionRadious:
                 playerStats.explosiveRange += effectValue;
+                return true;
+            
+            // ARMA DE BALA GIGANTE
+            case ShopCardEffect.HugeBulletGun:
+                playerStats.ChangeTypeOfBullet(false, false, true);
+                playerStats.hugeDamagePercent += 5;
+                return true;
+            case ShopCardEffect.HugeDamagePercent:
+                playerStats.hugeDamagePercent += effectValue;
                 return true;
             
             default:

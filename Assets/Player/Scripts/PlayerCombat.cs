@@ -96,9 +96,9 @@ public class PlayerCombat : MonoBehaviour
     {
         if (projectilePrefab == null) return;
         int currentShootDamage = stats.shootingDamage;
-        if (playerManager.playerHealth.CurrentHealth <= currentShootDamage) return;
-
-        playerManager.playerHealth.TakeDamage(currentShootDamage);
+        
+        if (playerManager.playerHealth.CurrentHealth <= stats.shootingCost) return;
+        playerManager.playerHealth.TakeDamage(stats.shootingCost);
 
         lastProjectileTime = Time.time;
 
@@ -116,7 +116,10 @@ public class PlayerCombat : MonoBehaviour
         Projectile projScript = proj.GetComponent<Projectile>();
         if (projScript != null)
         {
-            projScript.Configure(currentShootDamage, stats.projectileBounces, stats.maxTravelDistance, stats.bouncyGun, stats.explosiveGun, stats.hugeGun, stats.explosiveDamage, stats.explosiveRange);
+            projScript.Configure(currentShootDamage, stats.projectileBounces, stats.maxTravelDistance,
+                stats.bouncyGun, stats.explosiveGun, stats.hugeGun, stats.explosiveDamage, stats.explosiveRange, 
+                stats.hugeDamagePercent);
+            
             projScript.Launch(aimDir, stats.projectileSpeed);
         }
     }

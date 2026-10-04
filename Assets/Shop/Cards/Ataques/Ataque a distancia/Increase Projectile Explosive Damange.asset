@@ -16,9 +16,10 @@ MonoBehaviour:
   cardImage: {fileID: 0}
   cost: 0
   description: + Explosion DMG
-  effect: 12
+  effect: 14
   effectValue: 10
   effectValueDecimal: 0.3
   BounceUpgrade: 0
   ExplosiveUpgrade: 1
+  HugeBulletUpgrade: 0
   IsUnlockCard: 0

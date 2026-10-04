@@ -4,18 +4,18 @@ public class Health : MonoBehaviour, IDamageable
 {
 
     private int maxHealth = 100;
-    private int currentHealth;
+    private float currentHealth;
 
     public int MaxHealth => maxHealth;
-    public int CurrentHealth => currentHealth;
+    public float CurrentHealth => currentHealth;
 
     void Start()
     {
         currentHealth = maxHealth;
     }
 
-    public virtual void TakeDamage(int dmg) { 
-        currentHealth = Mathf.Clamp(currentHealth - dmg, 0, maxHealth);
+    public virtual void TakeDamage(float dmg) { 
+        currentHealth -= dmg;
     }
 
     public virtual void Heal(int amount)

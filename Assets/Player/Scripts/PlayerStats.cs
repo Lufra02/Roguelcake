@@ -25,7 +25,7 @@ public class PlayerStats : MonoBehaviour
     
     [Header("Supervivencia")]
     [Min(1)] public int maxHealth = 100;
-    [Min(0f)] public float healthRegenerationPerSecond = 0f;
+    [Min(0f)] public float secondsToRegenerateHealth = 0f;
     [Min(0)] public int gummyHealAmount = 10;
 
     [Header("Movimiento")]
@@ -48,6 +48,7 @@ public class PlayerStats : MonoBehaviour
     [Tooltip("Disparos por segundo antes del multiplicador de velocidad de ataque.")]
     [Min(0.01f)] public float shootingRate = 1.67f;
     [Min(0)] public int shootingDamage = 7;
+    [Min(0)] public int shootingCost = 1;
     [Min(0f)] public float projectileSpeed = 12f;
     
     [Tooltip("Tope máximo de disparos por segundo, para que no supere la animación/sonido.")]
@@ -66,7 +67,9 @@ public class PlayerStats : MonoBehaviour
     public int explosiveDamage;
     public int explosiveRange = 10;
     
-
+    [Header("ARMA GIGANTE")] 
+    public float hugeDamagePercent;
+    
     public float PhysicalAttackCooldown => 1f / (physicalAttackRate * attackSpeedMultiplier);
     public float ShootingCooldown => 1f / (shootingRate * attackSpeedMultiplier);
 
@@ -159,7 +162,7 @@ public class PlayerStats : MonoBehaviour
     public void AddHealthRegen(int amount)
     {
         if (amount <= 0) return;
-        healthRegenerationPerSecond += amount;
+        //healthRegenerationPerSecond += amount;
     }
     public void Heal(int amount)
     {

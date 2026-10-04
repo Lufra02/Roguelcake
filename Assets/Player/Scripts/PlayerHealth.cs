@@ -15,9 +15,9 @@ public class PlayerHealth : Health
 
     private void Update()
     {
-        if (stats == null || stats.healthRegenerationPerSecond <= 0f || CurrentHealth >= MaxHealth) return;
+        //if (stats == null || stats.healthRegenerationPerSecond <= 0f || CurrentHealth >= MaxHealth) return;
 
-        regenerationAccumulator += stats.healthRegenerationPerSecond * Time.deltaTime;
+        //regenerationAccumulator += stats.healthRegenerationPerSecond * Time.deltaTime;
         int healthToRestore = Mathf.FloorToInt(regenerationAccumulator);
         if (healthToRestore <= 0) return;
 
@@ -34,7 +34,7 @@ public class PlayerHealth : Health
 
     public void SetMaximumHealth(int amount) => SetMaxHealth(amount);
 
-    public override void TakeDamage(int dmg)
+    public override void TakeDamage(float dmg)
     {
         base.TakeDamage(dmg);
         if (CurrentHealth <= 0) 

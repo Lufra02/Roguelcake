@@ -313,21 +313,84 @@ public class ShopInteractable : MonoBehaviour, IInteractable
     // Las cartas que no pertenecen a ninguna de las dos categorías (ambos bools en false) nunca se filtran.
     private bool IsCardAvailable(ShopCard card, PlayerStats playerStats)
     {
-        if (playerStats == null) return true; // sin referencia al jugador no se puede filtrar, se muestra igual
+       
+        if (playerStats == null)
+        return true;
 
-        // Bloquea la categoría contraria por completo (incluida su carta de desbloqueo).
-        if (card.ExplosiveUpgrade && playerStats.bouncyGun) return false;
-        if (card.BounceUpgrade && playerStats.explosiveGun) return false;
+        // =========================================================
+        // BLOQUEO ENTRE CATEGORÍAS
+        // =========================================================
 
-        // Las mejoras dentro de una categoría (no la carta de desbloqueo en sí) solo aparecen
-        // si esa categoría ya está activa. Evita, por ejemplo, ofrecer "+ daño de explosión"
-        // antes de haber comprado "Explosive Bullet".
-        if (card.ExplosiveUpgrade && !card.IsUnlockCard && !playerStats.explosiveGun) return false;
-        if (card.BounceUpgrade && !card.IsUnlockCard && !playerStats.bouncyGun) return false;
+        // Si tienes REBOUND, no aparecen EXPLOSIVE ni HUGE
+        if (card.ExplosiveUpgrade && playerStats.bouncyGun)
+            return false;
 
-        // La carta de desbloqueo ya no debe ofrecerse una vez que esa categoría quedó activa.
-        if (card.IsUnlockCard && card.ExplosiveUpgrade && playerStats.explosiveGun) return false;
-        if (card.IsUnlockCard && card.BounceUpgrade && playerStats.bouncyGun) return false;
+        if (card.HugeBulletUpgrade && playerStats.bouncyGun)
+            return false;
+
+
+        // Si tienes EXPLOSIVE, no aparecen REBOUND ni HUGE
+        if (card.BounceUpgrade && playerStats.explosiveGun)
+            return false;
+
+        if (card.HugeBulletUpgrade && playerStats.explosiveGun)
+            return false;
+
+
+        // Si tienes HUGE BULLET, no aparecen REBOUND ni EXPLOSIVE
+        if (card.BounceUpgrade && playerStats.hugeGun)
+            return false;
+
+        if (card.ExplosiveUpgrade && playerStats.hugeGun)
+            return false;
+
+
+        // =========================================================
+        // LAS MEJORAS NORMALES REQUIEREN TENER DESBLOQUEADA
+        // SU CATEGORÍA
+        // =========================================================
+
+        // Mejoras EXPLOSIVE
+        if (card.ExplosiveUpgrade &&
+            !card.IsUnlockCard &&
+            !playerStats.explosiveGun)
+            return false;
+
+
+        // Mejoras REBOUND
+        if (card.BounceUpgrade &&
+            !card.IsUnlockCard &&
+            !playerStats.bouncyGun)
+            return false;
+
+
+        // Mejoras HUGE BULLET
+        if (card.HugeBulletUpgrade &&
+            !card.IsUnlockCard &&
+            !playerStats.hugeGun)
+            return false;
+
+
+        // =========================================================
+        // LAS CARTAS DE DESBLOQUEO DESAPARECEN UNA VEZ ACTIVADAS
+        // =========================================================
+
+        if (card.IsUnlockCard &&
+            card.ExplosiveUpgrade &&
+            playerStats.explosiveGun)
+            return false;
+
+
+        if (card.IsUnlockCard &&
+            card.BounceUpgrade &&
+            playerStats.bouncyGun)
+            return false;
+
+
+        if (card.IsUnlockCard &&
+            card.HugeBulletUpgrade &&
+            playerStats.hugeGun)
+            return false;
 
         return true;
     }

@@ -1023,10 +1023,11 @@ MonoBehaviour:
   maxTravelDistance: 10
   bouncyGun: 0
   explosiveGun: 0
-  hugeGun: 0
+  hugeGun: 1
   projectileBounces: 0
   explosiveDamage: 0
   explosiveRange: 10
+  hugeDamagePercent: 5
   addXP: 0
   addLevel: 0
 --- !u!1 &410087039
@@ -2896,9 +2897,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9ac980cd1ef6fd541b5d21eb976602a6, type: 2}
   - {fileID: 11400000, guid: a0148443ae07c8847b5ab37055cabb99, type: 2}
   - {fileID: 11400000, guid: f3ae10e3c0cb9e54aaf52d26288bae86, type: 2}
+  - {fileID: 11400000, guid: d3da9c7c7f27a8f449350f95e04bc87d, type: 2}
   - {fileID: 11400000, guid: 5f2d2e9e4b4bde348b921c4a728b59c9, type: 2}
   - {fileID: 11400000, guid: b7417b61f7189a64aaa4db7bedeca106, type: 2}
   - {fileID: 11400000, guid: eaf7f356a08fcc34593705416ae423c0, type: 2}
+  - {fileID: 11400000, guid: 6cfa8d34747d41e4aaa527d59eee9e06, type: 2}
+  - {fileID: 11400000, guid: 4e48485b5d50a35459261916b3c02777, type: 2}
   - {fileID: 11400000, guid: d26e59778a7950645a6e8766f51acfe6, type: 2}
   - {fileID: 11400000, guid: 483f017dfb82f9a4783193dd30311dda, type: 2}
   - {fileID: 11400000, guid: e467f9781f4d3c14185fea5dd50f1213, type: 2}
