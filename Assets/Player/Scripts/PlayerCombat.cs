@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Maneja el ataque cuerpo a cuerpo (principal) y el disparo de proyectil (secundario) en 3D.
-// Usa el paquete nuevo "Input System" (Mouse.current).
+// Usa el paquete nuevo "Input System" (Mouse.current / Gamepad.current).
 [RequireComponent(typeof(PlayerStats))]
 public class PlayerCombat : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private GameObject projectilePrefab;
     private float lastMeleeTime = -999f;
     private float lastProjectileTime = -999f;
-    
+
     void Awake()
     {
         if (playerController == null) playerController = GetComponent<PlayerController>();
@@ -39,19 +39,35 @@ public class PlayerCombat : MonoBehaviour
     void Update()
     {
         if (!PlayerManager.Instance.canAttack) return;
-        if (Mouse.current == null) return;
 
-        // Click izquierdo = ataque cuerpo a cuerpo (ataque principal del juego)
         float currentMeleeCooldown = stats.PhysicalAttackCooldown;
         float currentProjectileCooldown = stats.ShootingCooldown;
 
-        if ((Mouse.current.leftButton.wasPressedThisFrame || Gamepad.current.rightShoulder.wasPressedThisFrame) && Time.time >= lastMeleeTime + currentMeleeCooldown)
+        // Se revisa cada dispositivo por separado y solo si está presente, para poder
+        // jugar indistintamente con mouse o con gamepad sin que uno dependa del otro.
+        bool meleePressed = false;
+        bool shootPressed = false;
+
+        if (Mouse.current != null)
+        {
+            meleePressed |= Mouse.current.leftButton.wasPressedThisFrame;
+            shootPressed |= Mouse.current.rightButton.wasPressedThisFrame;
+        }
+
+        if (Gamepad.current != null)
+        {
+            meleePressed |= Gamepad.current.rightShoulder.wasPressedThisFrame;
+            shootPressed |= Gamepad.current.rightTrigger.wasPressedThisFrame;
+        }
+
+        // Click izquierdo / RB = ataque cuerpo a cuerpo (ataque principal del juego)
+        if (meleePressed && Time.time >= lastMeleeTime + currentMeleeCooldown)
         {
             MeleeAttack();
         }
 
-        // Click derecho = disparo de proyectil (ataque secundario)
-        if ((Mouse.current.rightButton.wasPressedThisFrame || Gamepad.current.rightTrigger.wasPressedThisFrame ) && Time.time >= lastProjectileTime + currentProjectileCooldown)
+        // Click derecho / RT = disparo de proyectil (ataque secundario)
+        if (shootPressed && Time.time >= lastProjectileTime + currentProjectileCooldown)
         {
             ShootProjectile();
         }

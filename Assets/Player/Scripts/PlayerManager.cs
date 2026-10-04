@@ -56,9 +56,20 @@ public class PlayerManager : MonoBehaviour
     {
         
         if(openShop != null) return;
+        if (gameManager == null) return;
         
+        // Se revisa cada dispositivo por separado y solo si está presente (igual que en
+        // PlayerCombat), para no depender de que ambos estén conectados a la vez.
+        bool pausePressed = false;
+ 
+        if (Keyboard.current != null)
+            pausePressed |= Keyboard.current.escapeKey.wasPressedThisFrame;
+ 
+        if (Gamepad.current != null)
+            pausePressed |= Gamepad.current.startButton.wasPressedThisFrame;
+ 
         // wasPressedThisFrame solo es verdadero en el frame donde comienza la pulsación.
-        if (gameManager != null && Keyboard.current != null && (Keyboard.current.escapeKey.wasPressedThisFrame || Gamepad.current.startButton.wasPressedThisFrame))
+        if (pausePressed)
         {
             gameManager.PauseGame();
         }

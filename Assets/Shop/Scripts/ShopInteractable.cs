@@ -23,7 +23,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
     private bool isOpen;
     private bool closeOnPurchase;
     private PlayerManager playerManager;
-    
+
     [Header("Control")]
     [SerializeField] private float navigationCooldown = 0.2f;
 
@@ -101,7 +101,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
 
         HandleCardNavigation(gamepad);
     }
-    
+
     private void HandleCardNavigation(Gamepad gamepad)
     {
         if (navigationTimer > 0f)
@@ -136,7 +136,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
             navigationTimer = navigationCooldown;
         }
     }
-    
+
     private void SelectNextCard()
     {
         int activeCards = GetActiveCardCount();
@@ -151,7 +151,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
 
         UpdateCardSelection();
     }
-    
+
     private void SelectPreviousCard()
     {
         int activeCards = GetActiveCardCount();
@@ -166,7 +166,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
 
         UpdateCardSelection();
     }
-    
+
     private int GetActiveCardCount()
     {
         int count = 0;
@@ -179,7 +179,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
 
         return count;
     }
-    
+
     private void UpdateCardSelection()
     {
         int activeIndex = 0;
@@ -196,7 +196,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
             activeIndex++;
         }
     }
-    
+
     // Para cerrar la tienda despues de la toma de una carta
     private void HandleCardPurchased(ShopCardButton button)
     {
@@ -205,7 +205,31 @@ public class ShopInteractable : MonoBehaviour, IInteractable
             CloseShop();
         }
     }
-    
+
+    // El mouse entró en una carta: la trata como la selección actual, igual que haría
+    // el gamepad al navegar hasta ella. Así ambos métodos de input comparten un solo estado.
+    private void HandleCardHovered(ShopCardButton hoveredButton)
+    {
+        int activeIndex = 0;
+
+        for (int i = 0; i < shopCardButtons.Length; i++)
+        {
+            ShopCardButton button = shopCardButtons[i];
+
+            if (button == null || !button.gameObject.activeSelf)
+                continue;
+
+            if (button == hoveredButton)
+            {
+                selectedCardIndex = activeIndex;
+                UpdateCardSelection();
+                return;
+            }
+
+            activeIndex++;
+        }
+    }
+
     private void PurchaseSelectedCard()
     {
         int activeIndex = 0;
@@ -240,6 +264,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
             if (button == null) continue;
 
             button.OnPurchased -= HandleCardPurchased;
+            button.OnHoverEnter -= HandleCardHovered;
 
             if (i < selectedCards.Count)
             {
@@ -247,6 +272,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
                 button.SetCard(selectedCards[i]);
                 button.SetPlayer(playerStats);
                 button.OnPurchased += HandleCardPurchased;
+                button.OnHoverEnter += HandleCardHovered;
             }
             else
             {
@@ -254,10 +280,10 @@ public class ShopInteractable : MonoBehaviour, IInteractable
                 button.gameObject.SetActive(false);
             }
         }
-        
+
         selectedCardIndex = 0;
         UpdateCardSelection();
-        
+
     }
 
     private List<ShopCard> GetRandomCards(int count, PlayerStats playerStats)
