@@ -16,25 +16,16 @@ public class PlayerInteraction : MonoBehaviour
     [Tooltip("Velocidad a la que se mueven los objetos atraídos, en unidades por segundo.")]
     public float attractionSpeed = 8f;
 
-    [Header("UI (opcional)")]
-    [Tooltip("GameObject de UI que se activa/desactiva automáticamente cuando hay algo interactuable cerca (ej. un ícono o texto 'Presiona E').")]
-    public GameObject interactionPromptUI;
-
     private IInteractable currentInteractable;
 
     void Update()
     {
         if (PlayerManager.Instance.isPaused) return;
 
-        FindClosestInteractable();
+        //FindClosestInteractable();
         AttractNearbyObjects();
-
-        if (currentInteractable != null && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            currentInteractable.Interact(gameObject);
-        }
+        
     }
-
     void FindClosestInteractable()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, interactionRadius, interactableLayer);
@@ -56,11 +47,7 @@ public class PlayerInteraction : MonoBehaviour
         }
  
         currentInteractable = closest;
- 
-        if (interactionPromptUI != null)
-        {
-            interactionPromptUI.SetActive(currentInteractable != null);
-        }
+        
     }
     
     void AttractNearbyObjects()
@@ -75,12 +62,4 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactionRadius);
-        
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, attractionRadius);
-    }
 }
