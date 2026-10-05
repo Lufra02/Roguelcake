@@ -1262,6 +1262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   canBeDamaged: 0
   eFrameSeconds: 3
+  Gomita: []
   gummyPrefab: {fileID: 943167131446072552, guid: fdd482a28cbf33c448bb49b700ff9792, type: 3}
   horizontalForceMultiplier: 1.7
   verticalForceMultiplier: 2.2
@@ -5161,6 +5162,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   canBeDamaged: 0
   eFrameSeconds: 3
+  Gomita:
+  - {fileID: 1104633433606547036}
+  - {fileID: 2330499066834405401}
+  - {fileID: 2123190188055334058}
+  - {fileID: 5766223760465498063}
+  - {fileID: 6671756006970613433}
+  - {fileID: 2318045489248100598}
+  - {fileID: 5945956020282254653}
+  - {fileID: 8738680099652977993}
+  - {fileID: 4225877555245781376}
+  - {fileID: 1163341842225617723}
+  - {fileID: 9174077174201872917}
+  - {fileID: 8301621456272762065}
+  - {fileID: 1851152135049400674}
+  - {fileID: 4067876239353353037}
+  - {fileID: 8335364809402937021}
+  - {fileID: 5303999658412884881}
+  - {fileID: 7131775195937400771}
   gummyPrefab: {fileID: 943167131446072552, guid: fdd482a28cbf33c448bb49b700ff9792, type: 3}
   horizontalForceMultiplier: 1.7
   verticalForceMultiplier: 2.2

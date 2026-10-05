@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,12 +12,15 @@ public class PlayerHealth : Health
     public bool canBeDamaged;
     [SerializeField] private float eFrameSeconds;
     private float timer;
+
+    [Header("Integracion Visual")]
+    [SerializeField] List<GameObject> Gomita = new List<GameObject>();
     
     [Header("Explosion de gomita")]
     [SerializeField] private GameObject gummyPrefab;
     
-    [SerializeField] [Range(0.0f, 10.0f)] private float horizontalForceMultiplier = 1f;
-    [SerializeField] [Range(0.0f, 10.0f)] private float verticalForceMultiplier = 1f;
+    [SerializeField] [UnityEngine.Range(0.0f, 10.0f)] private float horizontalForceMultiplier = 1f;
+    [SerializeField] [UnityEngine.Range(0.0f, 10.0f)] private float verticalForceMultiplier = 1f;
 
     private void Awake()
     {
@@ -25,20 +30,35 @@ public class PlayerHealth : Health
         
         canBeDamaged = true;
         timer = 0f;
+
+        foreach (var item in Gomita)
+        {
+            item.SetActive(true);
+        }
     }
     
     public void GetHealthBack() 
     {
         Heal(stats.gummyHealAmount);
+        UpdateDamageVisuals();
     }
 
-    public void RestoreHealth(int amount) => Heal(amount);
+    public void RestoreHealth(int amount)
+    {
+        Heal(amount);
+        UpdateDamageVisuals();
+    }
 
-    public void SetMaximumHealth(int amount) => SetMaxHealth(amount);
+    public void SetMaximumHealth(int amount)
+    {
+        SetMaxHealth(amount);
+        UpdateDamageVisuals();
+    }
 
     public override void TakeDamage(float dmg)
     {
         base.TakeDamage(dmg);
+        UpdateDamageVisuals();
         if (CurrentHealth <= 0) 
         {
             Die();
@@ -62,6 +82,26 @@ public class PlayerHealth : Health
                 canBeDamaged = true;
                 timer = 0f;
             }
+        }
+    }
+
+    // DESGASTE VISUAL PROGRESIVO
+    private void UpdateDamageVisuals()
+    {
+        if (Gomita == null || Gomita.Count == 0 || stats == null) return;
+
+        // Evita division por cero si maxHealth es 1
+        float maxHealth = Mathf.Max(stats.maxHealth, 1f);
+        float usableRange = Mathf.Max(maxHealth - 1f, 1f); // El rango real de "desgaste" va de 1 a maxHealth
+
+        // 1 de vida = 0%, vida maxima = 100%
+        float healthPercent = Mathf.Clamp01((CurrentHealth - 1f) / usableRange);
+
+        int activeCount = Mathf.CeilToInt(healthPercent * Gomita.Count);
+
+        for (int i = 0; i < Gomita.Count; i++)
+        {
+            Gomita[i].SetActive(i < activeCount);
         }
     }
 
@@ -89,6 +129,7 @@ public class PlayerHealth : Health
             }
 
             SetHealth(1);
+            UpdateDamageVisuals();
         }
         else
         {
@@ -108,10 +149,10 @@ public class PlayerHealth : Health
         
         manager.playerCombat.enabled = false;
         manager.playerController.enabled = false;
-        manager.playerHealth.enabled = false;
+        //manager.playerHealth.enabled = false;
 
         manager.playerAnimationManager.PlayOnTakeAnimation("Death_01");
         
-        
+        // INTEGRAR UI
     }
 }
