@@ -43,9 +43,12 @@ public class PlayerHealth : Health
         {
             Die();
         }
+        else
+        {
+            PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation("Take_Damage_01");
+        }
     }
-
-    public bool flag;
+    
     private void Update()
     {
         // E FRAMES UPDATE
@@ -59,12 +62,6 @@ public class PlayerHealth : Health
                 canBeDamaged = true;
                 timer = 0f;
             }
-        }
-
-        if (flag)
-        {
-            flag = false;
-            RecieveExplosion();
         }
     }
 

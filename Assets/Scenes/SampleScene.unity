@@ -1264,7 +1264,6 @@ MonoBehaviour:
   gummyPrefab: {fileID: 943167131446072552, guid: fdd482a28cbf33c448bb49b700ff9792, type: 3}
   horizontalForceMultiplier: 1.7
   verticalForceMultiplier: 2.2
-  flag: 0
 --- !u!114 &408529407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3494,7 +3493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dba14022fcd4824b88f047fe4ceb8c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MakeDamage
-  dmg: 50
+  dmg: 0
 --- !u!135 &1809889063
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5131,7 +5130,6 @@ MonoBehaviour:
   gummyPrefab: {fileID: 943167131446072552, guid: fdd482a28cbf33c448bb49b700ff9792, type: 3}
   horizontalForceMultiplier: 1.7
   verticalForceMultiplier: 2.2
-  flag: 0
 --- !u!114 &1792028375641358849
 MonoBehaviour:
   m_ObjectHideFlags: 0
