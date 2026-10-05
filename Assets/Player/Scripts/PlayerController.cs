@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,11 +28,15 @@ public class PlayerController : MonoBehaviour
     // Dirección de apuntado actual, sin importar si vino del mouse o del stick derecho.
     private Vector3 aimDirection = Vector3.forward;
 
+    PlayerAnimationManager animationManager;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         stats = GetComponent<PlayerStats>();
+        // Referencia propia obtenida en Awake, sin depender de que PlayerManager.Start()
+        // ya haya corrido (Unity no garantiza el orden entre Start() de distintos scripts).
+        animationManager = GetComponent<PlayerAnimationManager>();
         if (mainCamera == null) mainCamera = Camera.main;
 
         // El jugador rota manualmente en Y hacia el mouse; evitamos que la física lo vuelque
@@ -44,11 +49,13 @@ public class PlayerController : MonoBehaviour
         if (!PlayerManager.Instance.canMove)
         {
             moveInput = Vector3.zero;
+            UpdateAnimator();
             return;
         }
 
         ReadMovementInput();
         UpdateAiming();
+        UpdateAnimator();
     }
 
     // Habilita o deshabilita el movimiento y el apuntado del jugador.
@@ -57,11 +64,17 @@ public class PlayerController : MonoBehaviour
     {
         PlayerManager.Instance.canMove = enabled;
         moveInput = Vector3.zero;
+        UpdateAnimator();
 
         if (!enabled)
         {
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
         }
+    }
+
+    void UpdateAnimator()
+    {
+        animationManager?.SetMovement(moveInput.magnitude);
     }
 
     void ReadMovementInput()

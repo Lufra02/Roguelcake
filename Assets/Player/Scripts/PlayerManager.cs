@@ -24,6 +24,7 @@ public class PlayerManager : MonoBehaviour
     [HideInInspector] public PlayerController playerController;
     [HideInInspector] public PlayerInteraction playerInteraction;
     [HideInInspector] public PlayerStats playerStats;
+    [HideInInspector] public PlayerAnimationManager playerAnimationManager;
 
     // FLAGS
     public bool canMove = true;
@@ -43,13 +44,14 @@ public class PlayerManager : MonoBehaviour
         playerCombat = GetComponent<PlayerCombat>();
         playerController = GetComponent<PlayerController>();
         playerStats = GetComponent<PlayerStats>();
-
+        playerAnimationManager = GetComponent<PlayerAnimationManager>();
+        
         gameManager = GameManager.Instance;
         if (gameManager != null)
         {
             gameManager.onChangeGameState += OnChangeGameStateCallback;
         }
-
+        
     }
     
     private void Update()

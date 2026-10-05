@@ -75,6 +75,8 @@ public class PlayerCombat : MonoBehaviour
 
     void MeleeAttack()
     {
+        PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation("Physical_Attack_01");
+        
         lastMeleeTime = Time.time;
 
         Vector3 aimDir = playerController.GetAimDirection();
@@ -99,8 +101,10 @@ public class PlayerCombat : MonoBehaviour
         
         if (playerManager.playerHealth.CurrentHealth <= stats.shootingCost) return;
         playerManager.playerHealth.TakeDamage(stats.shootingCost);
-
+        
         lastProjectileTime = Time.time;
+        
+        //PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation();
 
         Vector3 aimDir = playerController.GetAimDirection();
         Vector3 spawnPos = aimPoint != null ? aimPoint.position : transform.position;
