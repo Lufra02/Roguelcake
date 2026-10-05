@@ -99,6 +99,19 @@ public class PlayerHealth : Health
     public override void Die()
     {
         base.Die();
-        print("se murio");
+        PlayerManager manager = PlayerManager.Instance;
+
+        if (manager.isDead)
+            return;
+
+        manager.isDead = true;
+        
+        manager.playerCombat.enabled = false;
+        manager.playerController.enabled = false;
+        manager.playerHealth.enabled = false;
+
+        manager.playerAnimationManager.PlayOnTakeAnimation("Death_01");
+        
+        
     }
 }

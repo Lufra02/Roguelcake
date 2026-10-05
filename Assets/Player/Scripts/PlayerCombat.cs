@@ -10,6 +10,8 @@ public class PlayerCombat : MonoBehaviour
     private PlayerManager playerManager;
     private PlayerStats stats;
     private PlayerController playerController;
+
+    [SerializeField] private Transform physicalAimPoint;
     [SerializeField] private Transform aimPoint; // Objeto vacío, hijo del jugador, colocado un poco delante de él (usado como punto de disparo)
 
     [Header("Ataque cuerpo a cuerpo")]
@@ -69,7 +71,7 @@ public class PlayerCombat : MonoBehaviour
         // Click derecho / RT = disparo de proyectil (ataque secundario)
         if (shootPressed && Time.time >= lastProjectileTime + currentProjectileCooldown)
         {
-            ShootProjectile();
+            TryToShoot();
         }
     }
 
@@ -81,7 +83,7 @@ public class PlayerCombat : MonoBehaviour
 
         Vector3 aimDir = playerController.GetAimDirection();
         float physicalAttackSize = stats.physicalAttackSize;
-        Vector3 hitCenter = transform.position + aimDir * (physicalAttackSize * 0.5f);
+        Vector3 hitCenter = physicalAimPoint.position + aimDir * (physicalAttackSize * 0.5f);
 
         Collider[] hits = Physics.OverlapSphere(hitCenter, physicalAttackSize * 0.5f, enemyLayer);
         foreach (Collider hit in hits)
@@ -94,17 +96,21 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    void ShootProjectile()
+    public void TryToShoot()
     {
         if (projectilePrefab == null) return;
         int currentShootDamage = stats.shootingDamage;
-        
+
         if (playerManager.playerHealth.CurrentHealth <= stats.shootingCost) return;
         playerManager.playerHealth.TakeDamage(stats.shootingCost);
-        
         lastProjectileTime = Time.time;
-        
-        //PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation();
+
+        PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation("Shooting_Attack_01");
+
+    }
+
+    void ShootProjectile()
+    {
 
         Vector3 aimDir = playerController.GetAimDirection();
         Vector3 spawnPos = aimPoint != null ? aimPoint.position : transform.position;
@@ -120,7 +126,7 @@ public class PlayerCombat : MonoBehaviour
         Projectile projScript = proj.GetComponent<Projectile>();
         if (projScript != null)
         {
-            projScript.Configure(currentShootDamage, stats.projectileBounces, stats.maxTravelDistance,
+            projScript.Configure(stats.shootingDamage, stats.projectileBounces, stats.maxTravelDistance,
                 stats.bouncyGun, stats.explosiveGun, stats.hugeGun, stats.explosiveDamage, stats.explosiveRange, 
                 stats.hugeDamagePercent);
             
@@ -135,7 +141,7 @@ public class PlayerCombat : MonoBehaviour
         Gizmos.color = Color.red;
         Vector3 aimDir = Application.isPlaying ? playerController.GetAimDirection() : transform.forward;
         float physicalAttackSize = stats != null ? stats.physicalAttackSize : 1.2f;
-        Vector3 hitCenter = transform.position + aimDir * (physicalAttackSize * 0.5f);
+        Vector3 hitCenter = physicalAimPoint.position + aimDir * (physicalAttackSize * 0.5f);
         Gizmos.DrawWireSphere(hitCenter, physicalAttackSize * 0.5f);
     }
 }
