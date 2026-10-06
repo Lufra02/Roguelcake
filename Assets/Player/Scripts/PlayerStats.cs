@@ -100,13 +100,23 @@ public class PlayerStats : MonoBehaviour
             LevelUp();
         }
     }
- 
+
+    public bool flag;
+    private void Update()
+    {
+        if (flag)
+        {
+            flag = false;
+            LevelUp();
+        }
+    }
+
     private void LevelUp()
     {
         currentLevel++;
         currentXP = 0;
         requiredXP = CalculateRequiredXP(currentLevel);
-        
+
         // INTEGRAR LA TIENDA DE EXP
         // Abre la tienda para elegir una mejora; se cierra sola en cuanto se compre una carta.
         levelUpShop?.OpenForLevelUp(gameObject);

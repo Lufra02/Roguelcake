@@ -58,11 +58,12 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         isOpen = true;
         closeOnPurchase = closeShopOnPurchase;
 
-        playerController ??= interactor.GetComponent<PlayerController>();
-        playerCombat ??= interactor.GetComponent<PlayerCombat>();
+        playerController = interactor.GetComponent<PlayerController>();
+        playerCombat = interactor.GetComponent<PlayerCombat>();
         playerManager = interactor.GetComponent<PlayerManager>();
         playerManager?.SetOpenShop(this);
-
+        
+        // Debajo de esto
         AssignCardsToButtons(interactor.GetComponent<PlayerStats>());
         playerController?.SetMovementEnabled(false);
         playerCombat?.SetCombatEnabled(false);
