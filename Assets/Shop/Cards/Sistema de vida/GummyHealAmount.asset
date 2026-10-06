@@ -17,5 +17,9 @@ MonoBehaviour:
   cost: 25
   description: Mayor regeneracion por gomita recogida
   effect: 3
-  effectValue: 10
+  effectValue: 1
   effectValueDecimal: 0.3
+  BounceUpgrade: 0
+  ExplosiveUpgrade: 0
+  HugeBulletUpgrade: 0
+  IsUnlockCard: 0
