@@ -1612,6 +1612,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   canBeDamaged: 0
   eFrameSeconds: 3
+  lifeSystemUIManager: {fileID: 0}
   Gomita: []
   gummyPrefab: {fileID: 943167131446072552, guid: fdd482a28cbf33c448bb49b700ff9792, type: 3}
   horizontalForceMultiplier: 1.7
@@ -1637,6 +1638,7 @@ MonoBehaviour:
   baseXPRequirement: 100
   xpGrowthRate: 1.15
   levelUpShop: {fileID: 2075561686}
+  MaxHealthAllowed: 13
   maxHealth: 11
   secondsToRegenerateHealth: 0
   gummyHealAmount: 10
@@ -1660,6 +1662,7 @@ MonoBehaviour:
   explosiveRange: 10
   hugeDamagePercent: 5
   flag: 0
+  sexo: 0
 --- !u!114 &408529408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1993,6 +1996,68 @@ RectTransform:
   m_AnchoredPosition: {x: -0.30932617, y: 0}
   m_SizeDelta: {x: -10.6202, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &697357468
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 697357469}
+  - component: {fileID: 697357470}
+  m_Layer: 5
+  m_Name: Slots
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &697357469
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697357468}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2011555632}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -650, y: 45}
+  m_SizeDelta: {x: 100, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &697357470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697357468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 70
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1001 &716645182
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3398,6 +3463,7 @@ RectTransform:
   - {fileID: 1463387686}
   - {fileID: 1270736176}
   - {fileID: 1262752313}
+  - {fileID: 2011555632}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4379,7 +4445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dba14022fcd4824b88f047fe4ceb8c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MakeDamage
-  dmg: 6
+  dmg: 1
 --- !u!135 &1809889063
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4473,6 +4539,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1845246061
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1845246062}
+  m_Layer: 5
+  m_Name: Slot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1845246062
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845246061}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2011555632}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1850010165
 GameObject:
   m_ObjectHideFlags: 0
@@ -4645,6 +4746,103 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91071f8545aa25d4c8591618b81a7ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSelect
+--- !u!1 &2011555631
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2011555632}
+  - component: {fileID: 2011555635}
+  - component: {fileID: 2011555634}
+  - component: {fileID: 2011555633}
+  m_Layer: 5
+  m_Name: LifeSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2011555632
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011555631}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1845246062}
+  - {fileID: 697357469}
+  m_Father: {fileID: 1372414068}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -90.428345}
+  m_SizeDelta: {x: 0, y: 180.85663}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2011555633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011555631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7da40161626fd5c4d9ea4b3ca0cd0732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LifeSystemUIManager
+  lastHearth: {fileID: 5353787334978018826, guid: c322f25d23df1ae4d87bdeb3f9f82336, type: 3}
+  fullHearth: {fileID: 8351906563330707343, guid: ac41f497f044348458f64a5b42adb95d, type: 3}
+  halfHearth: {fileID: 6570017353328660899, guid: 9350107a28f655547904f8e99b8c13e7, type: 3}
+  emptyHearth: {fileID: 8351906563330707343, guid: 96b0bae200a4995428c8d6b62059e609, type: 3}
+  lastHearthPosition: {fileID: 1845246062}
+  heartsContainer: {fileID: 697357469}
+  playerStats: {fileID: 1792028375641358850}
+--- !u!114 &2011555634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011555631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2011555635
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011555631}
+  m_CullTransparentMesh: 1
 --- !u!1 &2064786488
 GameObject:
   m_ObjectHideFlags: 0
@@ -6050,6 +6248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   canBeDamaged: 0
   eFrameSeconds: 3
+  lifeSystemUIManager: {fileID: 2011555633}
   Gomita:
   - {fileID: 1104633433606547036}
   - {fileID: 2330499066834405401}
@@ -6107,7 +6306,8 @@ MonoBehaviour:
   baseXPRequirement: 100
   xpGrowthRate: 1.15
   levelUpShop: {fileID: 2075561686}
-  maxHealth: 11
+  MaxHealthAllowed: 13
+  maxHealth: 10
   secondsToRegenerateHealth: 0
   gummyHealAmount: 1
   movementSpeed: 6
@@ -6130,6 +6330,7 @@ MonoBehaviour:
   explosiveRange: 10
   hugeDamagePercent: 5
   flag: 0
+  sexo: 0
 --- !u!114 &1792028375641358851
 MonoBehaviour:
   m_ObjectHideFlags: 0

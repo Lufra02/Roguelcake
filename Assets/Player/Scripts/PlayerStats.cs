@@ -22,8 +22,9 @@ public class PlayerStats : MonoBehaviour
     
     [Tooltip("La misma tienda que usas para caminar y comprar. Se abre sola al subir de nivel.")]
     [SerializeField] private ShopInteractable levelUpShop;
-    
+
     [Header("Supervivencia")]
+    public int MaxHealthAllowed = 13;
     [Min(1)] public int maxHealth = 100;
     [Min(0f)] public float secondsToRegenerateHealth = 0f;
     [Min(0)] public int gummyHealAmount = 10;
@@ -102,12 +103,20 @@ public class PlayerStats : MonoBehaviour
     }
 
     public bool flag;
+    public bool sexo;
     private void Update()
     {
         if (flag)
         {
             flag = false;
             LevelUp();
+        }
+
+        if (sexo)
+        {
+            sexo = false;
+            AddMaxHealth(1);
+            Heal(1);
         }
     }
 
@@ -148,6 +157,12 @@ public class PlayerStats : MonoBehaviour
         if (amount <= 0) return;
 
         maxHealth += amount;
+
+        if (maxHealth >= MaxHealthAllowed) 
+        {
+            maxHealth = MaxHealthAllowed;
+        }
+
         playerManager.playerHealth.SetMaximumHealth(maxHealth);
     }
     public void AddHealthRegen(int amount)

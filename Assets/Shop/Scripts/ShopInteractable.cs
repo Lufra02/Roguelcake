@@ -318,6 +318,12 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         if (playerStats == null)
         return true;
 
+        // 
+        if(playerStats.maxHealth >= playerStats.MaxHealthAllowed && card.effect == ShopCardEffect.MaxHealth)
+        {
+            return false;
+        }
+
         // =========================================================
         // BLOQUEO ENTRE CATEGORÍAS
         // =========================================================
