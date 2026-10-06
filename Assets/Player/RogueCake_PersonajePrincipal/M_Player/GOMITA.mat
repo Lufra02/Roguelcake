@@ -134,7 +134,7 @@ Material:
     - _Surface: 1
     - _TransDistortion: 0.145
     - _TransPower: 2.79
-    - _TranslucencyIntensity: 0.58
+    - _TranslucencyIntensity: 1.77
     - _WorkflowMode: 1
     - _ZWrite: 0
     m_Colors:
