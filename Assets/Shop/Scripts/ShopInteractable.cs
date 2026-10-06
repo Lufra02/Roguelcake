@@ -58,11 +58,12 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         isOpen = true;
         closeOnPurchase = closeShopOnPurchase;
 
-        playerController ??= interactor.GetComponent<PlayerController>();
-        playerCombat ??= interactor.GetComponent<PlayerCombat>();
+        playerController = interactor.GetComponent<PlayerController>();
+        playerCombat = interactor.GetComponent<PlayerCombat>();
         playerManager = interactor.GetComponent<PlayerManager>();
         playerManager?.SetOpenShop(this);
-
+        
+        // Debajo de esto
         AssignCardsToButtons(interactor.GetComponent<PlayerStats>());
         playerController?.SetMovementEnabled(false);
         playerCombat?.SetCombatEnabled(false);
@@ -316,6 +317,12 @@ public class ShopInteractable : MonoBehaviour, IInteractable
        
         if (playerStats == null)
         return true;
+
+        // 
+        if(playerStats.maxHealth >= playerStats.MaxHealthAllowed && card.effect == ShopCardEffect.MaxHealth)
+        {
+            return false;
+        }
 
         // =========================================================
         // BLOQUEO ENTRE CATEGORÍAS

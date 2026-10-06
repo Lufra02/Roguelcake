@@ -13,6 +13,9 @@ public class PlayerHealth : Health
     [SerializeField] private float eFrameSeconds;
     private float timer;
 
+    [Header("Life UI System")]
+    [SerializeField] public LifeSystemUIManager lifeSystemUIManager;
+
     [Header("Integracion Visual")]
     [SerializeField] List<GameObject> Gomita = new List<GameObject>();
     
@@ -27,6 +30,8 @@ public class PlayerHealth : Health
         stats = GetComponent<PlayerStats>();
         if (stats != null)
             SetMaxHealth(stats.maxHealth);
+
+        SetHealth(MaxHealth);
         
         canBeDamaged = true;
         timer = 0f;
@@ -35,24 +40,30 @@ public class PlayerHealth : Health
         {
             item.SetActive(true);
         }
+        lifeSystemUIManager.UpdateHearths(CurrentHealth, MaxHealth);
     }
     
     public void GetHealthBack() 
     {
         Heal(stats.gummyHealAmount);
         UpdateDamageVisuals();
+        lifeSystemUIManager.UpdateHearths(CurrentHealth, MaxHealth);
     }
 
     public void RestoreHealth(int amount)
     {
         Heal(amount);
         UpdateDamageVisuals();
+        lifeSystemUIManager.UpdateHearths(CurrentHealth, MaxHealth);
     }
 
     public void SetMaximumHealth(int amount)
     {
         SetMaxHealth(amount);
         UpdateDamageVisuals();
+
+        lifeSystemUIManager.UpdateHearths(CurrentHealth, MaxHealth);
+        print($"Current: {CurrentHealth} / Max: {MaxHealth}");
     }
 
     public override void TakeDamage(float dmg)
@@ -66,6 +77,7 @@ public class PlayerHealth : Health
         else
         {
             PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation("Take_Damage_01");
+            lifeSystemUIManager.UpdateHearths(CurrentHealth, MaxHealth);
         }
     }
     
@@ -130,6 +142,7 @@ public class PlayerHealth : Health
 
             SetHealth(1);
             UpdateDamageVisuals();
+            lifeSystemUIManager.UpdateHearths(CurrentHealth, MaxHealth);
         }
         else
         {
@@ -149,10 +162,8 @@ public class PlayerHealth : Health
         
         manager.playerCombat.enabled = false;
         manager.playerController.enabled = false;
-        //manager.playerHealth.enabled = false;
 
-        manager.playerAnimationManager.PlayOnTakeAnimation("Death_01");
-        
-        // INTEGRAR UI
+        manager.playerAnimationManager.PlayOnTakeAnimation("Death_01"); 
+       
     }
 }

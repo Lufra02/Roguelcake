@@ -47,7 +47,7 @@ public class ShopCard : ScriptableObject
     [SerializeField, TextArea(2, 5)] private string description;
 
     [Header("Efecto")]
-    [SerializeField] private ShopCardEffect effect;
+    [SerializeField] public ShopCardEffect effect;
     [SerializeField, Min(1)] private int effectValue = 10;
     
     [Tooltip("Usado solo por efectos decimales (cadencias de ataque, ej. 0.3). Se ignora en el resto de los efectos.")]
@@ -63,6 +63,7 @@ public class ShopCard : ScriptableObject
     public bool HugeBulletUpgrade;
     [Tooltip("Márcalo SOLO en la carta que desbloquea la categoría (Explosive Bullet / Increase Rebound). Las demás mejoras de esa categoría déjalo en false.")]
     public bool IsUnlockCard;
+    public bool isMaxHealth;
     
 
     public bool ApplyTo(PlayerStats playerStats)

@@ -18,3 +18,9 @@ MonoBehaviour:
   description: Aumenta la vida maxima en 25 puntos.
   effect: 0
   effectValue: 25
+  effectValueDecimal: 0.3
+  BounceUpgrade: 0
+  ExplosiveUpgrade: 0
+  HugeBulletUpgrade: 0
+  IsUnlockCard: 0
+  isMaxHealth: 1
