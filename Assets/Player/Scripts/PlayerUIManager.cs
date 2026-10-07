@@ -14,6 +14,7 @@ public class PlayerUIManager : MonoBehaviour
     [SerializeField] private Button optionsButton_Pause;
     [SerializeField] private Button exitButton_Pause;
 
+    // Se conserva por si quieres utilizarlo en el futuro
     [SerializeField] private GameObject selectedButtonHover;
 
     [Header("Death System")]
@@ -21,35 +22,55 @@ public class PlayerUIManager : MonoBehaviour
     [SerializeField] private Button restartButton_Death;
     [SerializeField] private Button exitButton_Death;
 
+    // Se conserva por si quieres utilizarlo en el futuro
     [SerializeField] private GameObject selectedButtonHover_Death;
+
 
     private void Start()
     {
         gameManager = GameManager.Instance;
 
-        // Asignacion de navegacion
-        ConfigureDeathNavigation();
-        ConfigurePauseNavigation();
+        // Configurar navegación
+        // ConfigureDeathNavigation();
+        // ConfigurePauseNavigation();
 
-        // Botones de pausa
+        // =========================
+        // BOTONES DE PAUSA
+        // =========================
+
         resumeButton_Pause.onClick.AddListener(Resume);
         optionsButton_Pause.onClick.AddListener(Options);
         exitButton_Pause.onClick.AddListener(ExitScene);
 
-        // Botones de muerte
+        // =========================
+        // BOTONES DE MUERTE
+        // =========================
+
         restartButton_Death.onClick.AddListener(Restart);
         exitButton_Death.onClick.AddListener(ExitScene);
 
-        // Ocultar paneles al comenzar
+        // =========================
+        // OCULTAR PANELES
+        // =========================
+
         pausePanel.SetActive(false);
         deathPanel.SetActive(false);
 
-        // Ocultar selectores
+        // =========================
+        // SELECTORES
+        // =========================
+
+        // Los conservamos para futuro uso,
+        // pero actualmente no se utilizan.
         if (selectedButtonHover != null)
             selectedButtonHover.SetActive(false);
 
         if (selectedButtonHover_Death != null)
             selectedButtonHover_Death.SetActive(false);
+
+        // =========================
+        // GAME MANAGER
+        // =========================
 
         if (gameManager != null)
         {
@@ -57,23 +78,6 @@ public class PlayerUIManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (EventSystem.current == null)
-            return;
-
-        // Actualizar selector del menú de pausa
-        if (pausePanel != null && pausePanel.activeSelf)
-        {
-            UpdatePauseHoverPosition();
-        }
-
-        // Actualizar selector del menú de muerte
-        if (deathPanel != null && deathPanel.activeSelf)
-        {
-            UpdateDeathHoverPosition();
-        }
-    }
 
     // =========================================================
     // DEATH UI
@@ -82,61 +86,36 @@ public class PlayerUIManager : MonoBehaviour
     private void ConfigureDeathNavigation()
     {
         Navigation restartNavigation = restartButton_Death.navigation;
-        restartNavigation.mode = Navigation.Mode.Explicit;
-
-        restartNavigation.selectOnDown = exitButton_Death;
-        restartNavigation.selectOnUp = exitButton_Death;
+        restartNavigation.mode = Navigation.Mode.Automatic;
 
         restartButton_Death.navigation = restartNavigation;
 
 
         Navigation exitNavigation = exitButton_Death.navigation;
-        exitNavigation.mode = Navigation.Mode.Explicit;
-
-        exitNavigation.selectOnDown = restartButton_Death;
-        exitNavigation.selectOnUp = restartButton_Death;
+        exitNavigation.mode = Navigation.Mode.Automatic;
 
         exitButton_Death.navigation = exitNavigation;
     }
+
 
     public void ShowDeathUI()
     {
         deathPanel.SetActive(true);
 
-        // Ocultar selector de pausa
         if (selectedButtonHover != null)
             selectedButtonHover.SetActive(false);
 
-        // Mostrar selector de muerte
         if (selectedButtonHover_Death != null)
-            selectedButtonHover_Death.SetActive(true);
+            selectedButtonHover_Death.SetActive(false);
 
-        // Seleccionar automáticamente Restart
-        EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(
-            restartButton_Death.gameObject
-        );
-
-        UpdateDeathHoverPosition();
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(
+                restartButton_Death.gameObject
+            );
+        }
     }
 
-    private void UpdateDeathHoverPosition()
-    {
-        if (selectedButtonHover_Death == null)
-            return;
-
-        if (EventSystem.current == null)
-            return;
-
-        GameObject selected =
-            EventSystem.current.currentSelectedGameObject;
-
-        if (selected == null)
-            return;
-
-        selectedButtonHover_Death.transform.position =
-            selected.transform.position;
-    }
 
     // =========================================================
     // PAUSE UI
@@ -144,48 +123,40 @@ public class PlayerUIManager : MonoBehaviour
 
     private void ConfigurePauseNavigation()
     {
-        Navigation resumeNavigation = resumeButton_Pause.navigation;
-        resumeNavigation.mode = Navigation.Mode.Explicit;
 
-        resumeNavigation.selectOnDown = optionsButton_Pause;
-        resumeNavigation.selectOnUp = exitButton_Pause;
+        Navigation resumeNavigation = resumeButton_Pause.navigation;
+        resumeNavigation.mode = Navigation.Mode.Automatic;
 
         resumeButton_Pause.navigation = resumeNavigation;
 
 
         Navigation optionsNavigation = optionsButton_Pause.navigation;
-        optionsNavigation.mode = Navigation.Mode.Explicit;
-
-        optionsNavigation.selectOnDown = exitButton_Pause;
-        optionsNavigation.selectOnUp = resumeButton_Pause;
+        optionsNavigation.mode = Navigation.Mode.Automatic;
 
         optionsButton_Pause.navigation = optionsNavigation;
 
 
         Navigation exitNavigation = exitButton_Pause.navigation;
-        exitNavigation.mode = Navigation.Mode.Explicit;
-
-        exitNavigation.selectOnDown = resumeButton_Pause;
-        exitNavigation.selectOnUp = optionsButton_Pause;
+        exitNavigation.mode = Navigation.Mode.Automatic;
 
         exitButton_Pause.navigation = exitNavigation;
     }
+
 
     private void OnChangeGameStateCallback(GameState newState)
     {
         bool isPaused = newState == GameState.Pause;
 
-        pausePanel.SetActive(isPaused);
-
         if (isPaused)
         {
-            // Ocultar selector de muerte
+            pausePanel.SetActive(true);
+
+            // No utilizamos los selectores
+            if (selectedButtonHover != null)
+                selectedButtonHover.SetActive(false);
+
             if (selectedButtonHover_Death != null)
                 selectedButtonHover_Death.SetActive(false);
-
-            // Mostrar selector de pausa
-            if (selectedButtonHover != null)
-                selectedButtonHover.SetActive(true);
 
             SelectFirstButton();
         }
@@ -196,10 +167,16 @@ public class PlayerUIManager : MonoBehaviour
                 EventSystem.current.SetSelectedGameObject(null);
             }
 
+            pausePanel.SetActive(false);
+
             if (selectedButtonHover != null)
                 selectedButtonHover.SetActive(false);
+
+            if (selectedButtonHover_Death != null)
+                selectedButtonHover_Death.SetActive(false);
         }
     }
+
 
     private void SelectFirstButton()
     {
@@ -209,32 +186,11 @@ public class PlayerUIManager : MonoBehaviour
         if (resumeButton_Pause == null)
             return;
 
-        EventSystem.current.SetSelectedGameObject(null);
-
         EventSystem.current.SetSelectedGameObject(
             resumeButton_Pause.gameObject
         );
-
-        UpdatePauseHoverPosition();
     }
 
-    private void UpdatePauseHoverPosition()
-    {
-        if (selectedButtonHover == null)
-            return;
-
-        if (EventSystem.current == null)
-            return;
-
-        GameObject selected =
-            EventSystem.current.currentSelectedGameObject;
-
-        if (selected == null)
-            return;
-
-        selectedButtonHover.transform.position =
-            selected.transform.position;
-    }
 
     // =========================================================
     // BUTTONS
@@ -248,6 +204,7 @@ public class PlayerUIManager : MonoBehaviour
         }
     }
 
+
     private void Restart()
     {
         SceneManager.LoadScene(
@@ -255,10 +212,12 @@ public class PlayerUIManager : MonoBehaviour
         );
     }
 
+
     private void Options()
     {
 
     }
+
 
     private void ExitScene()
     {
@@ -268,6 +227,7 @@ public class PlayerUIManager : MonoBehaviour
         Application.Quit();
 #endif
     }
+
 
     // =========================================================
     // CLEANUP

@@ -95,12 +95,144 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: UI_SpriSheet_01_0
+      rect:
+        serializedVersion: 2
+        x: 449
+        y: 2224
+        width: 409
+        height: 451
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e767c2e7328ac714c9b289a5a5f137a3
+      internalID: 268434723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SpriSheet_01_2
+      rect:
+        serializedVersion: 2
+        x: 1663
+        y: 1957
+        width: 878
+        height: 749
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0c583726e024c048973bbe9b9097181
+      internalID: -962257212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_SpriSheet_01_3
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 1211
+        width: 523
+        height: 497
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7eb5a673faa8d3844b61c5f00678b056
+      internalID: 731051792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Button
+      rect:
+        serializedVersion: 2
+        x: 1606
+        y: 1127
+        width: 999
+        height: 604
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8c8abacc0786c4429f41eb052f67709
+      internalID: -845211756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Last_Hearth
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 283
+        width: 474
+        height: 493
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e9c2102bb2e8394f969bb2a054cbc46
+      internalID: 1086394086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Button_Hover
+      rect:
+        serializedVersion: 2
+        x: 1587
+        y: 235
+        width: 999
+        height: 604
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9161483731df8324ebb941e6e1e41566
+      internalID: -728592898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 7e1c8a3cb49edbd4e80f2a7b58743557
     internalID: 0
     vertices: []
     indices: 
@@ -108,8 +240,20 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
-    nameFileIdTable: {}
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      UI_Button: -845211756
+      UI_Button_Hover: -728592898
+      UI_Last_Hearth: 1086394086
+      UI_SpriSheet_01_0: 268434723
+      UI_SpriSheet_01_2: -962257212
+      UI_SpriSheet_01_3: 731051792
+      UI_SpriSheet_01_5: -193016819
+      UI_SpriSheet_01_6: -1770743925
+      UI_SpriSheet_01_7: 1567220380
+      UI_SpriSheet_01_8: 558197332
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
