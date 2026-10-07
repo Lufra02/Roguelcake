@@ -946,6 +946,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 255035263509515497, guid: 0564b5da718873debb28c2e7c7a48a71, type: 3}
+      propertyPath: m_Speed
+      value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 255035263509515497, guid: 0564b5da718873debb28c2e7c7a48a71, type: 3}
       propertyPath: m_Acceleration
       value: 4
       objectReference: {fileID: 0}
@@ -956,6 +960,18 @@ PrefabInstance:
     - target: {fileID: 255035263509515497, guid: 0564b5da718873debb28c2e7c7a48a71, type: 3}
       propertyPath: m_StoppingDistance
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 743893041244543992, guid: 0564b5da718873debb28c2e7c7a48a71, type: 3}
+      propertyPath: m_Height
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 743893041244543992, guid: 0564b5da718873debb28c2e7c7a48a71, type: 3}
+      propertyPath: m_Radius
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 743893041244543992, guid: 0564b5da718873debb28c2e7c7a48a71, type: 3}
+      propertyPath: m_Center.y
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2001710782719448276, guid: 0564b5da718873debb28c2e7c7a48a71, type: 3}
       propertyPath: moveSpeed
