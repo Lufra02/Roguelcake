@@ -1,26 +1,39 @@
 using UnityEngine;
+using UnityEngine.AI; // 1. IMPORTANTE: Necesario para NavMeshAgent
+
 public abstract class Enemy : MonoBehaviour, IDamageable
 {
-    [Header("Main Atributes")]
-    [SerializeField] protected float maxHealth;
+    [Header("Main Attributes")]
+    [SerializeField] protected float maxHealth = 100f;
     [SerializeField] protected float currentHealth;
-    [SerializeField] protected float moveSpeed;
-    [SerializeField] protected float damage;
+    [SerializeField] protected float moveSpeed = 3.5f;
+    [SerializeField] protected float damage = 10f;
     [SerializeField] protected Transform target;
 
-    [Header("Detection & attack")]
+    [Header("Detection & Attack")]
     [SerializeField] protected float detectionRange = 8f;
-    [SerializeField] protected float attackRange = 1.5f;
+    [SerializeField] protected float attackRange = 2.5f;
     [SerializeField] protected float attackCooldown = 1f;
 
+    // Componentes de navegación y física
+    protected NavMeshAgent agent;
     protected Rigidbody enemyRB;
     protected Collider enemyCollider;
     protected bool isDead = false;
 
-
     protected virtual void Awake()
     {
         enemyRB = GetComponent<Rigidbody>();
+        enemyCollider = GetComponent<Collider>();
+        agent = GetComponent<NavMeshAgent>();
+
+        // Sincronizamos la velocidad y la distancia de freno con tus variables
+        if (agent != null)
+        {
+            agent.speed = moveSpeed;
+            agent.stoppingDistance = attackRange;
+        }
+
         currentHealth = maxHealth;
     }
 
@@ -32,15 +45,14 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             if (player != null)
                 target = player.transform;
         }
-
     }
 
-    // Update is called once per frame
     protected virtual void Update()
     {
-        if (isDead || target == null)
+        if (isDead || target == null || agent == null)
             return;
 
+        // Medimos la distancia real
         float distance = Vector3.Distance(transform.position, target.position);
 
         if (distance <= attackRange)
@@ -49,41 +61,43 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         }
         else if (distance <= detectionRange)
         {
-            Vector3 direction = target.position - transform.position;
-            Move(direction);
+            ChaseTarget();
         }
         else
         {
             Idle();
         }
-
     }
 
-    protected virtual void Move(Vector3 direction)
+    // El agente calcula la ruta y esquiva los obstáculos automáticamente
+    protected virtual void ChaseTarget()
     {
-        direction.y = 0f;
+        if (agent.isStopped)
+            agent.isStopped = false;
 
-        if (direction.sqrMagnitude <= 0.001f)
-            return;
-
-        direction.Normalize();
-
-        transform.position += direction * moveSpeed * Time.deltaTime;
-
-        transform.forward = direction;
-    }
-
-
-
-
-    protected virtual void Attack()
-    {
-        Debug.Log($"{name} attacks for {damage} damage.");
+        agent.SetDestination(target.position);
     }
 
     protected virtual void Idle()
     {
-        enemyRB.linearVelocity = Vector2.zero;
+        // Detiene el movimiento del agente
+        if (agent.hasPath)
+            agent.ResetPath();
+    }
+
+    protected virtual void Attack()
+    {
+        // Se frena para atacar
+        if (agent.hasPath)
+            agent.ResetPath();
+
+        // Rota hacia el jugador mientras ataca
+        Vector3 direction = (target.position - transform.position).normalized;
+        direction.y = 0;
+        if (direction.sqrMagnitude > 0.001f)
+            transform.forward = direction;
+
+        // Debug.Log($"{name} ataca...");
     }
 
     public void TakeDamage(float amount)
@@ -92,26 +106,15 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             return;
 
         amount = Mathf.Max(0f, amount);
-
         currentHealth -= amount;
-
-        Debug.Log(
-            $"{name} recibió {amount} de daño. " +
-            $"Vida restante: {currentHealth}"
-        );
 
         OnDamageTaken(amount);
 
         if (currentHealth <= 0f)
-        {
             Die();
-        }
     }
 
-    protected virtual void OnDamageTaken(float damage)
-    {
-        //esta funcion se le hace override para un comportamiento especial
-    }
+    protected virtual void OnDamageTaken(float damage) { }
 
     protected virtual void Die()
     {
@@ -121,13 +124,14 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         isDead = true;
         currentHealth = 0f;
 
-        enemyRB.linearVelocity = Vector3.zero;
+        // Desactivamos el agente para que no siga calculando rutas al morir
+        if (agent != null && agent.enabled)
+            agent.enabled = false;
 
         if (enemyCollider != null)
             enemyCollider.enabled = false;
 
         this.enabled = false;
-
         OnDeath();
     }
 
@@ -135,5 +139,4 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     {
         Destroy(gameObject, 1.5f);
     }
-
 }
