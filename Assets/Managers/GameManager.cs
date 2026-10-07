@@ -3,30 +3,30 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class MainManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     // ----- SingleTon ---------
     #region Singleton
-    public static MainManager instance { get; private set; }
+    public static GameManager Instance { get; private set; }
     private void Awake()
     {
-        if (instance != null && instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        instance = this;
+        Instance = this;
         //DontDestroyOnLoad(gameObject);
     }
 
-    public static MainManager GetInstance() => instance;
+    public static GameManager GetInstance() => Instance;
 
     private void OnDestroy()
     {
-        if (instance == this)
+        if (Instance == this)
         {
-            instance = null;
+            Instance = null;
         }
     }
     #endregion
@@ -34,16 +34,16 @@ public class MainManager : MonoBehaviour
 
     public GameState gameState;
     public Action<GameState> onChangeGameState;
-    
+
+    public GameObject pausePanel;
     public bool canPause;
 
-   
-    
     
     private void Start()
     {
         gameState = GameState.Play;
         canPause = true;
+        pausePanel.SetActive(false);
     }
 
     public void PauseGame()
@@ -53,10 +53,12 @@ public class MainManager : MonoBehaviour
             if (gameState == GameState.Pause)
             {
                 ChangeGameState(GameState.Play);
+                pausePanel.SetActive(false);
             }
             else if (gameState == GameState.Play)
             {
                 ChangeGameState(GameState.Pause);
+                pausePanel.SetActive(true);
             }
         }
     }

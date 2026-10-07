@@ -1,126 +1,240 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Controla el movimiento con WASD (plano XZ) y la rotación del jugador hacia el mouse en 3D.
-// Usa el paquete nuevo "Input System" (Keyboard.current / Mouse.current).
-// Requiere Rigidbody con Use Gravity = true (o false si tu juego no tiene caída).
-[RequireComponent(typeof(Rigidbody))]
+// Controla el movimiento con WASD o joystick izquierdo.
+// Controla el apuntado con mouse o joystick derecho.
+[RequireComponent(typeof(Rigidbody), typeof(PlayerStats))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movimiento")]
-    public float moveSpeed = 6f;
-
     [Header("Apuntado")]
     public Camera mainCamera;
 
     [Header("Corrección de modelo")]
-    [Tooltip("Si tu modelo 3D no fue exportado con el frente hacia +Z, usa este valor para corregir el giro visual. Prueba con 90, -90 o 180 hasta que el frente del modelo coincida con la dirección real de apuntado.")]
+    [Tooltip("Corrección visual de rotación del modelo.")]
     public float modelRotationOffset = 0f;
 
+    [Header("Gamepad")]
+    [Range(0f, 0.9f)]
+    public float gamepadDeadZone = 0.15f;
+
     private Rigidbody rb;
+    private PlayerStats stats;
+
     private Vector3 moveInput;
     private Vector3 mouseWorldPosition;
 
-    // Cuando está en false (ej. tienda abierta, diálogo, cinemática), el jugador no se mueve ni rota.
-    public bool CanMove { get; private set; } = true;
+    private Vector3 aimDirection = Vector3.forward;
 
-    void Awake()
+    private PlayerAnimationManager animationManager;
+
+    // Control interno del movimiento.
+    private bool movementEnabled = true;
+
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        if (mainCamera == null) mainCamera = Camera.main;
+        stats = GetComponent<PlayerStats>();
 
-        // El jugador rota manualmente en Y hacia el mouse; evitamos que la física lo vuelque
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        animationManager = GetComponent<PlayerAnimationManager>();
+
+        if (mainCamera == null)
+            mainCamera = Camera.main;
+
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
 
-    void Update()
+    private void Update()
     {
-        if (!CanMove)
+        if (!movementEnabled)
         {
             moveInput = Vector3.zero;
+            UpdateAnimator();
             return;
         }
 
         ReadMovementInput();
-        AimTowardsMouse();
+        UpdateAiming();
+        UpdateAnimator();
     }
 
-    // Habilita o deshabilita el movimiento y el apuntado del jugador.
-    // Al deshabilitar, detiene inmediatamente la velocidad horizontal (conserva la vertical, por gravedad).
+    // Habilita o deshabilita el movimiento y el apuntado.
     public void SetMovementEnabled(bool enabled)
     {
-        CanMove = enabled;
+        movementEnabled = enabled;
+
         moveInput = Vector3.zero;
+
+        UpdateAnimator();
 
         if (!enabled)
         {
-            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            rb.linearVelocity = new Vector3(
+                0f,
+                rb.linearVelocity.y,
+                0f
+            );
         }
     }
 
-    void ReadMovementInput()
+    private void UpdateAnimator()
     {
-        // Keyboard.current puede ser null si no hay teclado detectado; nos protegemos
-        if (Keyboard.current == null)
+        animationManager?.SetMovement(moveInput.magnitude);
+    }
+
+    private void ReadMovementInput()
+    {
+        Vector2 input = Vector2.zero;
+
+        // Teclado
+        if (Keyboard.current != null)
         {
-            moveInput = Vector3.zero;
-            return;
+            float h = 0f;
+            float v = 0f;
+
+            if (Keyboard.current.aKey.isPressed)
+                h -= 1f;
+
+            if (Keyboard.current.dKey.isPressed)
+                h += 1f;
+
+            if (Keyboard.current.sKey.isPressed)
+                v -= 1f;
+
+            if (Keyboard.current.wKey.isPressed)
+                v += 1f;
+
+            input += new Vector2(h, v);
         }
 
-        float h = 0f;
-        float v = 0f;
+        // Gamepad
+        if (Gamepad.current != null)
+        {
+            Vector2 stickInput =
+                Gamepad.current.leftStick.ReadValue();
 
-        if (Keyboard.current.aKey.isPressed) h -= 1f;
-        if (Keyboard.current.dKey.isPressed) h += 1f;
-        if (Keyboard.current.sKey.isPressed) v -= 1f;
-        if (Keyboard.current.wKey.isPressed) v += 1f;
+            if (stickInput.sqrMagnitude >
+                gamepadDeadZone * gamepadDeadZone)
+            {
+                input += stickInput;
+            }
+        }
 
-        moveInput = new Vector3(h, 0f, v).normalized;
+        if (input.sqrMagnitude > 1f)
+        {
+            input.Normalize();
+        }
+
+        moveInput = new Vector3(
+            input.x,
+            0f,
+            input.y
+        );
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        // Nota: en Unity 6 el Rigidbody usa "linearVelocity".
-        // Si tu proyecto usa una versión anterior, cambia esta línea por: rb.velocity = ...
-        Vector3 targetVelocity = moveInput * moveSpeed;
-        targetVelocity.y = rb.linearVelocity.y; // conserva la velocidad vertical (gravedad, saltos, etc.)
+        if (!movementEnabled)
+            return;
+
+        Vector3 targetVelocity =
+            moveInput * stats.movementSpeed;
+
+        targetVelocity.y = rb.linearVelocity.y;
+
         rb.linearVelocity = targetVelocity;
     }
 
-    void AimTowardsMouse()
+    private void UpdateAiming()
     {
-        if (Mouse.current == null) return;
+        if (!movementEnabled)
+            return;
 
-        Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
-        Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
+        if (Gamepad.current != null)
+        {
+            Vector2 rightStick =
+                Gamepad.current.rightStick.ReadValue();
 
-        // Plano matemático horizontal a la altura del jugador.
-        // No requiere colliders de "suelo" reales, funciona con cámara top-down o isométrica.
-        Plane groundPlane = new Plane(Vector3.up, new Vector3(0f, transform.position.y, 0f));
+            if (rightStick.sqrMagnitude >
+                gamepadDeadZone * gamepadDeadZone)
+            {
+                Vector3 stickDirection =
+                    new Vector3(
+                        rightStick.x,
+                        0f,
+                        rightStick.y
+                    );
+
+                ApplyAimDirection(stickDirection);
+            }
+
+            return;
+        }
+
+        AimWithMouse();
+    }
+
+    private void AimWithMouse()
+    {
+        if (Mouse.current == null)
+            return;
+
+        if (mainCamera == null)
+            return;
+
+        Vector2 mouseScreenPos =
+            Mouse.current.position.ReadValue();
+
+        Ray ray =
+            mainCamera.ScreenPointToRay(mouseScreenPos);
+
+        Plane groundPlane = new Plane(
+            Vector3.up,
+            new Vector3(
+                0f,
+                transform.position.y,
+                0f
+            )
+        );
 
         if (groundPlane.Raycast(ray, out float distance))
         {
-            mouseWorldPosition = ray.GetPoint(distance);
+            mouseWorldPosition =
+                ray.GetPoint(distance);
 
-            Vector3 direction = mouseWorldPosition - transform.position;
+            Vector3 direction =
+                mouseWorldPosition - transform.position;
+
             direction.y = 0f;
 
-            if (direction.sqrMagnitude > 0.0001f)
-            {
-                // El offset solo corrige la rotación visual; GetAimDirection() sigue devolviendo
-                // la dirección real hacia el mouse, sin distorsión, para que el disparo apunte bien.
-                Quaternion lookRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
-                transform.rotation = lookRotation * Quaternion.Euler(0f, modelRotationOffset, 0f);
-            }
+            ApplyAimDirection(direction);
         }
     }
 
-    // Dirección normalizada (en el plano XZ) hacia el mouse, usada por PlayerCombat
+    private void ApplyAimDirection(Vector3 direction)
+    {
+        if (direction.sqrMagnitude < 0.0001f)
+            return;
+
+        aimDirection = direction.normalized;
+
+        Quaternion lookRotation =
+            Quaternion.LookRotation(
+                aimDirection,
+                Vector3.up
+            );
+
+        transform.rotation =
+            lookRotation *
+            Quaternion.Euler(
+                0f,
+                modelRotationOffset,
+                0f
+            );
+    }
+
     public Vector3 GetAimDirection()
     {
-        Vector3 dir = mouseWorldPosition - transform.position;
-        dir.y = 0f;
-        return dir.normalized;
+        return aimDirection;
     }
 
     public Vector3 GetMouseWorldPosition()

@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyDummie : MonoBehaviour, IDamageable
 {
     public float maxHealth = 30f;
-    private float currentHealth;
+    [SerializeField] private float currentHealth;
  
     void Awake()
     {
@@ -15,7 +15,7 @@ public class EnemyDummie : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        Debug.Log($"{name} recibió {amount} de daño. Vida restante: {currentHealth}");
+        //Debug.Log($"{name} recibió {amount} de daño. Vida restante: {currentHealth}");
  
         if (currentHealth <= 0f)
         {
