@@ -21540,6 +21540,10 @@ PrefabInstance:
       propertyPath: currentExpText
       value: 
       objectReference: {fileID: 2082209901}
+    - target: {fileID: 7609237981641610731, guid: dbadc7244019f2a47a302d5f62ec44e8, type: 3}
+      propertyPath: physicalAttackSize
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

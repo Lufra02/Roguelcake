@@ -7,7 +7,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     [SerializeField] protected float maxHealth = 100f;
     [SerializeField] protected float currentHealth;
     [SerializeField] protected float moveSpeed = 3.5f;
-    [SerializeField] protected float damage = 10f;
+    [SerializeField] protected float damage = 1f;
     [SerializeField] protected Transform target;
 
     [Header("Detection & Attack")]
@@ -216,6 +216,8 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     {
         if (isDead)
             return;
+
+        print("Fue golpeado por el player");
 
         amount = Mathf.Max(0f, amount);
         currentHealth -= amount;

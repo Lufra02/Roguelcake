@@ -65,7 +65,7 @@ public class PlayerCombat : MonoBehaviour
         // Click izquierdo / RB = ataque cuerpo a cuerpo (ataque principal del juego)
         if (meleePressed && Time.time >= lastMeleeTime + currentMeleeCooldown)
         {
-            MeleeAttack();
+            TryToMeeleAttack();
         }
 
         // Click derecho / RT = disparo de proyectil (ataque secundario)
@@ -75,12 +75,14 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    void MeleeAttack()
+    public void TryToMeeleAttack()
     {
         PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation("Physical_Attack_01");
-        
         lastMeleeTime = Time.time;
+    }
 
+    void MeleeAttack()
+    {
         Vector3 aimDir = playerController.GetAimDirection();
         float physicalAttackSize = stats.physicalAttackSize;
         Vector3 hitCenter = physicalAimPoint.position + aimDir * (physicalAttackSize * 0.5f);

@@ -53,7 +53,7 @@ MonoBehaviour:
   maxHealth: 10
   currentHealth: 10
   moveSpeed: 1.2
-  damage: 2
+  damage: 1
   target: {fileID: 0}
   detectionRange: 100
   attackRange: 1.1
