@@ -5,6 +5,9 @@ public class ExplosiveEnemy : Enemy
     [Header("Explosion")]
     [SerializeField] private float explosionDistance = 2f;
     [SerializeField] private float explosionDelay = 1.5f;
+    [SerializeField] private float explosionRadius = 3f;       // alcance real del daño
+    [SerializeField] private float cancelDistance = 4f;        // si el jugador se aleja más que esto, se cancela
+    [SerializeField] private bool cancelIfPlayerEscapes = true;
 
     private bool isPreparingExplosion;
     private float explosionTimer;
@@ -74,6 +77,17 @@ public class ExplosiveEnemy : Enemy
             return;
         }
 
+        // El jugador escapó: se cancela y el enemigo vuelve a perseguirlo
+        if (cancelIfPlayerEscapes && target != null)
+        {
+            float dist = Vector3.Distance(transform.position, target.position);
+            if (dist > cancelDistance)
+            {
+                isPreparingExplosion = false;
+                return;
+            }
+        }
+
         explosionTimer -= Time.deltaTime;
         if (explosionTimer <= 0f)
         {
@@ -84,10 +98,15 @@ public class ExplosiveEnemy : Enemy
 
     private void Explode()
     {
-        if (playerHealth != null)
-            playerHealth.RecieveExplosion();
+        if (playerHealth != null && target != null)
+        {
+            float dist = Vector3.Distance(transform.position, target.position);
 
-        // VFX, sonido, partículas, animación
+            if (dist <= explosionRadius)
+                playerHealth.RecieveExplosion();
+        }
+
+        // VFX, sonido, partículas, animación (la explosión se ve aunque no alcance al jugador)
 
         Die();
     }

@@ -59,8 +59,13 @@ MonoBehaviour:
   attackCooldown: 1
   experienceOrbPrefab: {fileID: 0}
   animator: {fileID: 0}
+  attackHitbox: {fileID: 0}
+  hitboxActiveTime: 0.2
   explosionDistance: 2
   explosionDelay: 1.5
+  explosionRadius: 3
+  cancelDistance: 3
+  cancelIfPlayerEscapes: 1
 --- !u!136 &4298513795248136826
 CapsuleCollider:
   m_ObjectHideFlags: 0

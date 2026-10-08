@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class RoundManager : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class RoundManager : MonoBehaviour
     [Tooltip("Rondas completadas exitosamente por el jugador.")]
     [SerializeField] private int completedRounds = 0;
     public int CompletedRounds => completedRounds;
+    [SerializeField] private TextMeshProUGUI roundText;
 
     [Header("Configuración de Oleadas")]
     [SerializeField] private int initialWaveSize = 10;
@@ -162,6 +164,12 @@ public class RoundManager : MonoBehaviour
         waveSpawnTimer = 0f;
 
         Debug.Log($"<color=cyan>[RoundManager] Iniciando Ronda {completedRounds + 1}. Enemigos de oleada: {enemiesToSpawn}</color>");
+        UpdateRoundUI();
+    }
+    private void UpdateRoundUI()
+    {
+        if (roundText != null)
+            roundText.text = $"Ronda: {completedRounds + 1}";
     }
 
     private void UpdateWaveSpawning()
@@ -209,7 +217,12 @@ public class RoundManager : MonoBehaviour
         GameObject enemyObj = selectedPool.Get(freePosition, rotation, isWaveEnemy);
         if (enemyObj == null) return;
 
-        // ... (el resto igual)
+        PooledEnemy pooledComp = enemyObj.GetComponent<PooledEnemy>();
+        if (pooledComp != null)
+        {
+            pooledComp.OnEnemyDeath -= HandleEnemyDeath;
+            pooledComp.OnEnemyDeath += HandleEnemyDeath;
+        }
 
         Enemy enemy = enemyObj.GetComponent<Enemy>();
         if (enemy != null)
