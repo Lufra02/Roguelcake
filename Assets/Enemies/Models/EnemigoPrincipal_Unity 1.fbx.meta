@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 84b665d9ea176924e8416bb91b789b61
+guid: b159688d8bec5e242b431a875933a64a
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -276,7 +276,8 @@ ModelImporter:
     - name: r_ear_03_jnt
       parentName: r_ear_02_jnt
       position: {x: 0.34054935, y: -3.0730972e-14, z: 0.000002064847}
-      rotation: {x: -0.0000000063604864, y: -0.00000012572853, z: -0.0000000095418935, w: 1}
+      rotation: {x: -0.0000000063604864, y: -0.00000012572853, z: -0.0000000095418935,
+        w: 1}
       scale: {x: 1, y: 1.0000002, z: 1}
     - name: l_ear_01_jnt
       parentName: head_jnt

@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.AI; // 1. IMPORTANTE: Necesario para NavMeshAgent
+using UnityEngine.AI;
 
 public abstract class Enemy : MonoBehaviour, IDamageable
 {
@@ -13,8 +13,10 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     [Header("Detection & Attack")]
     [SerializeField] protected float detectionRange = 8f;
     [SerializeField] protected float attackRange = 2.5f;
-    [SerializeField] protected float attackCooldown = 1f;
+    [SerializeField] protected float attackCooldown = 1.7f;   // segundos entre golpes
+    [SerializeField] protected GameObject experienceOrbPrefab;
     protected PooledEnemy pooledEnemyComponent;
+    [SerializeField] private Animator animator;
 
     // Componentes de navegación y física
     protected NavMeshAgent agent;
@@ -22,14 +24,22 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     protected Collider enemyCollider;
     protected bool isDead = false;
 
+    // Ataque
+    protected PlayerHealth playerHealth;
+    private float attackTimer;
+
+    // Pausa (los hijos solo leen isGamePaused)
+    private GameManager gameManager;
+    protected bool isGamePaused;
+
     protected virtual void Awake()
     {
         enemyRB = GetComponent<Rigidbody>();
         enemyCollider = GetComponent<Collider>();
         agent = GetComponent<NavMeshAgent>();
         pooledEnemyComponent = GetComponent<PooledEnemy>();
+        animator = GetComponentInChildren<Animator>();
 
-        // Sincronizamos la velocidad y la distancia de freno con tus variables
         if (agent != null)
         {
             agent.speed = moveSpeed;
@@ -39,22 +49,47 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
     }
 
-    protected virtual void Start()
+    // ---------------- PAUSA ----------------
+
+    protected virtual void OnEnable()
     {
-        if (target == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-                target = player.transform;
-        }
+        gameManager = GameManager.Instance;
+        if (gameManager != null)
+            gameManager.onChangeGameState += OnChangeGameStateCallback;
     }
+
+    protected virtual void OnDisable()
+    {
+        if (gameManager != null)
+            gameManager.onChangeGameState -= OnChangeGameStateCallback;
+
+        isGamePaused = false;
+    }
+
+    private void OnChangeGameStateCallback(GameState newState)
+    {
+        isGamePaused = newState == GameState.Pause;
+
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.isStopped = isGamePaused;
+
+        if (animator != null)
+            animator.speed = isGamePaused ? 0f : 1f;   // congela también la animación
+    }
+
+    // ---------------- UPDATE ----------------
 
     protected virtual void Update()
     {
-        if (isDead || target == null || agent == null)
+        if (isGamePaused || isDead || target == null || agent == null)
             return;
 
-        // Medimos la distancia real
+        if (attackTimer > 0f)
+            attackTimer -= Time.deltaTime;
+
+        if (animator != null)
+            animator.Play("Caminar");
+
         float distance = Vector3.Distance(transform.position, target.position);
 
         if (distance <= attackRange)
@@ -69,9 +104,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         {
             Idle();
         }
+
+        if (currentHealth <= 0f && !isDead)
+        {
+            Die();
+        }
     }
 
-    // El agente calcula la ruta y esquiva los obstáculos automáticamente
     protected virtual void ChaseTarget()
     {
         if (agent.isStopped)
@@ -82,25 +121,43 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void Idle()
     {
-        // Detiene el movimiento del agente
         if (agent.hasPath)
             agent.ResetPath();
     }
 
     protected virtual void Attack()
     {
-        // Se frena para atacar
+        // Se frena y rota hacia el jugador (esto sí ocurre cada frame)
         if (agent.hasPath)
             agent.ResetPath();
 
-        // Rota hacia el jugador mientras ataca
         Vector3 direction = (target.position - transform.position).normalized;
         direction.y = 0;
         if (direction.sqrMagnitude > 0.001f)
             transform.forward = direction;
 
-        // Debug.Log($"{name} ataca...");
+        // El golpe solo se da cuando el cooldown terminó
+        if (attackTimer > 0f)
+            return;
+
+        attackTimer = attackCooldown;
+        PerformAttack();
     }
+
+    // El golpe en sí. Los hijos pueden sobrescribirlo (o dejarlo vacío).
+    protected virtual void PerformAttack()
+    {
+        if (playerHealth == null || !playerHealth.canBeDamaged)
+            return;
+
+        var pm = PlayerManager.Instance;
+        if (pm != null && pm.isDead)
+            return;
+
+        playerHealth.TakeDamage(damage);
+    }
+
+    // ---------------- VIDA ----------------
 
     public void TakeDamage(float amount)
     {
@@ -111,7 +168,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         currentHealth -= amount;
 
         OnDamageTaken(amount);
-
         if (currentHealth <= 0f)
             Die();
     }
@@ -120,13 +176,9 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
-        if (isDead)
-            return;
-
         isDead = true;
         currentHealth = 0f;
 
-        // Desactivamos el agente para que no siga calculando rutas al morir
         if (agent != null && agent.enabled)
             agent.enabled = false;
 
@@ -137,8 +189,30 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         OnDeath();
     }
 
+    public virtual void Initialize(GameObject xpPrefab, Transform playerTarget)
+    {
+        experienceOrbPrefab = xpPrefab;
+        target = playerTarget;
+        playerHealth = playerTarget != null ? playerTarget.GetComponent<PlayerHealth>() : null;
+
+        isDead = false;
+        currentHealth = maxHealth;
+        attackTimer = 0f;
+        this.enabled = true;
+
+        if (enemyCollider != null)
+            enemyCollider.enabled = true;
+
+        if (agent != null)
+        {
+            agent.enabled = true;
+            agent.isStopped = false;
+        }
+    }
+
     protected virtual void OnDeath()
     {
+        Instantiate(experienceOrbPrefab, transform.position, Quaternion.identity);
         pooledEnemyComponent?.Die();
     }
 }

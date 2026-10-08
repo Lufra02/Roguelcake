@@ -1,52 +1,154 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RoundManager : MonoBehaviour
 {
+    [Header("Pools de Enemigos")]
+    [SerializeField] private ObjectPool basicEnemyPool;
+    [SerializeField] private ObjectPool explosiveEnemyPool;
+
     [Header("Referencias")]
-    [SerializeField] private ObjectPool enemyPool;
     [SerializeField] private Transform[] spawnPoints;
+    [SerializeField] private GameObject experienceOrbPrefab;
+    [SerializeField] private Transform playerTransform;
+
+    [Header("Estado de Rondas")]
+    [Tooltip("Rondas completadas exitosamente por el jugador.")]
+    [SerializeField] private int completedRounds = 0;
+    public int CompletedRounds => completedRounds;
 
     [Header("Configuración de Oleadas")]
     [SerializeField] private int initialWaveSize = 10;
-
     [SerializeField] private int enemiesIncreasePerRound = 5;
-
     [SerializeField] private float gracePeriodDuration = 5f;
 
     [Header("Enemigos Periódicos (Background)")]
     [SerializeField] private float periodicSpawnInterval = 5f;
 
-    private int currentRound = 0;
+    [Header("Configuración de Enemigos")]
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float explosiveEnemyChance = 0.25f;
+
+    [SerializeField]
+    private int explosiveEnemyUnlockRound = 4;
+
     private int waveEnemiesRemaining = 0;
     private bool isGracePeriod = false;
-    private Coroutine periodicSpawnCoroutine;
+
+    // --- Timers (reemplazan a las corrutinas) ---
+    private float periodicSpawnTimer;
+    private float graceTimer;
+    private bool isInitialized;   // true solo si Start pasó la validación de spawn points
+
+    // --- Pausa ---
+    private GameManager gameManager;
+    private bool isGamePaused;
+
+    private static RoundManager Instance;
+
+    public static RoundManager GetInstance()
+    {
+        return Instance;
+    }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
+        // Suscripción en Start (y no en OnEnable) para asegurar que GameManager.Instance ya existe
+        gameManager = GameManager.Instance;
+        if (gameManager != null)
+        {
+            gameManager.onChangeGameState += OnChangeGameStateCallback;
+        }
+
         if (spawnPoints == null || spawnPoints.Length == 0)
         {
             Debug.LogError("[RoundManager] No hay spawn points configurados.", this);
             return;
         }
 
+        isInitialized = true;
+        periodicSpawnTimer = periodicSpawnInterval;
         StartNextRound();
-        periodicSpawnCoroutine = StartCoroutine(PeriodicSpawnRoutine());
     }
+
+    private void OnChangeGameStateCallback(GameState newState)
+    {
+        isGamePaused = newState == GameState.Pause;
+    }
+
+    private void Update()
+    {
+        if (!isInitialized || isGamePaused)
+            return;
+
+        UpdatePeriodicSpawn();
+        UpdateGracePeriod();
+    }
+
+    // ---------------- SPAWN PERIÓDICO ----------------
+
+    private void UpdatePeriodicSpawn()
+    {
+        periodicSpawnTimer -= Time.deltaTime;
+        if (periodicSpawnTimer > 0f) return;
+
+        // Se reinicia siempre, igual que el bucle original
+        // (si estaba en gracia, simplemente se salta ese spawn y espera otro intervalo)
+        periodicSpawnTimer = periodicSpawnInterval;
+
+        if (isGracePeriod) return;
+
+        Transform randomSpawn = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        SpawnEnemy(randomSpawn.position, randomSpawn.rotation, isWaveEnemy: false);
+    }
+
+    // ---------------- PERIODO DE GRACIA ----------------
+
+    private void UpdateGracePeriod()
+    {
+        if (!isGracePeriod) return;
+
+        graceTimer -= Time.deltaTime;
+        if (graceTimer <= 0f)
+        {
+            StartNextRound();
+        }
+    }
+
+    private void StartGracePeriod()
+    {
+        isGracePeriod = true;
+        graceTimer = gracePeriodDuration;
+
+        // SE TERMINÓ LA RONDA: Aquí se incrementa la variable serializada
+        completedRounds++;
+        Debug.Log($"<color=green>[RoundManager] ¡Ronda terminada! Total completadas: {completedRounds}. Tiempo de gracia: {gracePeriodDuration}s...</color>");
+    }
+
+    // ---------------- RONDAS ----------------
 
     private void StartNextRound()
     {
-        currentRound++;
         isGracePeriod = false;
 
-        // Cálculo de enemigos para la oleada principal de esta ronda
-        int enemiesToSpawn = initialWaveSize + (currentRound - 1) * enemiesIncreasePerRound;
+        // La dificultad escala en función de las rondas ya completadas
+        int enemiesToSpawn = initialWaveSize + (completedRounds * enemiesIncreasePerRound);
         waveEnemiesRemaining = enemiesToSpawn;
 
-        Debug.Log($"<color=cyan>[RoundManager] Iniciando Ronda {currentRound}. Enemigos de oleada: {enemiesToSpawn}</color>");
+        Debug.Log($"<color=cyan>[RoundManager] Iniciando Ronda {completedRounds + 1}. Enemigos de oleada: {enemiesToSpawn}</color>");
 
-        // Distribución equitativa entre los spawns disponible
         for (int i = 0; i < enemiesToSpawn; i++)
         {
             Transform spawnPoint = spawnPoints[i % spawnPoints.Length];
@@ -54,69 +156,71 @@ public class RoundManager : MonoBehaviour
         }
     }
 
-//Bug muy probable cuando el juego este en pausa
-    private IEnumerator PeriodicSpawnRoutine()
+    private ObjectPool GetEnemyPool()
     {
-        while (true)
+        int currentRound = completedRounds + 1;
+
+        if (currentRound >= explosiveEnemyUnlockRound)
         {
-            yield return new WaitForSeconds(periodicSpawnInterval);
-
-            // Opcional: no spawnear extras durante el tiempo de gracia
-            if (isGracePeriod) continue;
-
-            Transform randomSpawn = spawnPoints[Random.Range(0, spawnPoints.Length)];
-            SpawnEnemy(randomSpawn.position, randomSpawn.rotation, isWaveEnemy: false);
+            if (Random.value <= explosiveEnemyChance)
+            {
+                return explosiveEnemyPool;
+            }
         }
+
+        return basicEnemyPool;
     }
 
     private void SpawnEnemy(Vector3 position, Quaternion rotation, bool isWaveEnemy)
     {
-        GameObject enemyObj = enemyPool.Get(position, rotation);
-        if (enemyObj == null) return;
+        ObjectPool selectedPool = GetEnemyPool();
 
-        PooledEnemy enemy = enemyObj.GetComponent<PooledEnemy>();
-        if (enemy == null)
+        if (selectedPool == null)
         {
-            Debug.LogError("[RoundManager] El prefab del pool debe contener el script 'PooledEnemy'.", enemyObj);
+            Debug.LogError("[RoundManager] No se encontró un ObjectPool.");
             return;
         }
 
-        enemy.Setup(enemyPool, isWaveEnemy);
-        enemy.OnEnemyDeath += HandleEnemyDeath;
+        GameObject enemyObj = selectedPool.Get(position, rotation, isWaveEnemy);
+
+        if (enemyObj == null)
+            return;
+
+        PooledEnemy pooledComp = enemyObj.GetComponent<PooledEnemy>();
+
+        if (pooledComp != null)
+        {
+            pooledComp.OnEnemyDeath -= HandleEnemyDeath;
+            pooledComp.OnEnemyDeath += HandleEnemyDeath;
+        }
+
+        Enemy enemy = enemyObj.GetComponent<Enemy>();
+
+        if (enemy != null)
+        {
+            enemy.Initialize(experienceOrbPrefab, playerTransform);
+        }
     }
 
     private void HandleEnemyDeath(PooledEnemy enemy)
     {
-        // Desuscribir el evento para evitar fugas de memoria o múltiples llamadas
         enemy.OnEnemyDeath -= HandleEnemyDeath;
 
-        // Los enemigos del temporizador de 5s no cuentan para terminar la ronda
         if (!enemy.IsWaveEnemy) return;
 
         waveEnemiesRemaining--;
-        Debug.Log($"[RoundManager] Enemigo de oleada eliminado. Restantes: {waveEnemiesRemaining}");
 
         if (waveEnemiesRemaining <= 0 && !isGracePeriod)
         {
-            StartCoroutine(GracePeriodRoutine());
+            StartGracePeriod();
         }
-    }
-
-    private IEnumerator GracePeriodRoutine()
-    {
-        isGracePeriod = true;
-        Debug.Log($"<color=green>[RoundManager] ¡Ronda {currentRound} completada! Tiempo de gracia: {gracePeriodDuration}s...</color>");
-
-        yield return new WaitForSeconds(gracePeriodDuration);
-
-        StartNextRound();
     }
 
     private void OnDestroy()
     {
-        if (periodicSpawnCoroutine != null)
+        if (gameManager != null)
         {
-            StopCoroutine(periodicSpawnCoroutine);
+            gameManager.onChangeGameState -= OnChangeGameStateCallback;
         }
     }
 }
