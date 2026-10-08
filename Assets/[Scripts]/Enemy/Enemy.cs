@@ -14,6 +14,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     [SerializeField] protected float detectionRange = 8f;
     [SerializeField] protected float attackRange = 2.5f;
     [SerializeField] protected float attackCooldown = 1f;
+    protected PooledEnemy pooledEnemyComponent;
 
     // Componentes de navegación y física
     protected NavMeshAgent agent;
@@ -26,6 +27,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         enemyRB = GetComponent<Rigidbody>();
         enemyCollider = GetComponent<Collider>();
         agent = GetComponent<NavMeshAgent>();
+        pooledEnemyComponent = GetComponent<PooledEnemy>();
 
         // Sincronizamos la velocidad y la distancia de freno con tus variables
         if (agent != null)
@@ -137,6 +139,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void OnDeath()
     {
-        Destroy(gameObject, 1.5f);
+        pooledEnemyComponent?.Die();
     }
 }
