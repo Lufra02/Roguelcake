@@ -10,6 +10,15 @@ public class RoundManager : MonoBehaviour
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private GameObject experienceOrbPrefab;
     [SerializeField] private Transform playerTransform;
+    [SerializeField] private float spawnRadius = 3f;           // área alrededor del spawn point
+    [SerializeField] private float enemyClearance = 0.8f;      // espacio libre mínimo entre enemigos
+    [SerializeField] private LayerMask enemyLayer;             // layer "Enemy"
+    [SerializeField] private int maxPlacementAttempts = 10;
+    [SerializeField] private float waveSpawnInterval = 0.15f;  // pausa entre cada enemigo de la oleada
+
+    private int pendingWaveSpawns;
+    private int waveSpawnIndex;
+    private float waveSpawnTimer;
 
     [Header("Estado de Rondas")]
     [Tooltip("Rondas completadas exitosamente por el jugador.")]
@@ -93,6 +102,7 @@ public class RoundManager : MonoBehaviour
         if (!isInitialized || isGamePaused)
             return;
 
+        UpdateWaveSpawning();
         UpdatePeriodicSpawn();
         UpdateGracePeriod();
     }
@@ -143,17 +153,31 @@ public class RoundManager : MonoBehaviour
     {
         isGracePeriod = false;
 
-        // La dificultad escala en función de las rondas ya completadas
         int enemiesToSpawn = initialWaveSize + (completedRounds * enemiesIncreasePerRound);
         waveEnemiesRemaining = enemiesToSpawn;
 
-        Debug.Log($"<color=cyan>[RoundManager] Iniciando Ronda {completedRounds + 1}. Enemigos de oleada: {enemiesToSpawn}</color>");
+        // En lugar de spawnear todo aquí, se encola
+        pendingWaveSpawns = enemiesToSpawn;
+        waveSpawnIndex = 0;
+        waveSpawnTimer = 0f;
 
-        for (int i = 0; i < enemiesToSpawn; i++)
-        {
-            Transform spawnPoint = spawnPoints[i % spawnPoints.Length];
-            SpawnEnemy(spawnPoint.position, spawnPoint.rotation, isWaveEnemy: true);
-        }
+        Debug.Log($"<color=cyan>[RoundManager] Iniciando Ronda {completedRounds + 1}. Enemigos de oleada: {enemiesToSpawn}</color>");
+    }
+
+    private void UpdateWaveSpawning()
+    {
+        if (pendingWaveSpawns <= 0) return;
+
+        waveSpawnTimer -= Time.deltaTime;
+        if (waveSpawnTimer > 0f) return;
+
+        waveSpawnTimer = waveSpawnInterval;
+
+        Transform spawnPoint = spawnPoints[waveSpawnIndex % spawnPoints.Length];
+        SpawnEnemy(spawnPoint.position, spawnPoint.rotation, isWaveEnemy: true);
+
+        waveSpawnIndex++;
+        pendingWaveSpawns--;
     }
 
     private ObjectPool GetEnemyPool()
@@ -174,32 +198,51 @@ public class RoundManager : MonoBehaviour
     private void SpawnEnemy(Vector3 position, Quaternion rotation, bool isWaveEnemy)
     {
         ObjectPool selectedPool = GetEnemyPool();
-
         if (selectedPool == null)
         {
             Debug.LogError("[RoundManager] No se encontró un ObjectPool.");
             return;
         }
 
-        GameObject enemyObj = selectedPool.Get(position, rotation, isWaveEnemy);
+        TryGetFreePosition(position, out Vector3 freePosition);
 
-        if (enemyObj == null)
-            return;
+        GameObject enemyObj = selectedPool.Get(freePosition, rotation, isWaveEnemy);
+        if (enemyObj == null) return;
 
-        PooledEnemy pooledComp = enemyObj.GetComponent<PooledEnemy>();
-
-        if (pooledComp != null)
-        {
-            pooledComp.OnEnemyDeath -= HandleEnemyDeath;
-            pooledComp.OnEnemyDeath += HandleEnemyDeath;
-        }
+        // ... (el resto igual)
 
         Enemy enemy = enemyObj.GetComponent<Enemy>();
-
         if (enemy != null)
         {
             enemy.Initialize(experienceOrbPrefab, playerTransform);
+            enemy.Teleport(freePosition);   // ver nota abajo
         }
+    }
+
+    private bool TryGetFreePosition(Vector3 center, out Vector3 result)
+    {
+        Physics.SyncTransforms(); // asegura que los enemigos recién colocados cuenten en la comprobación
+
+        for (int i = 0; i < maxPlacementAttempts; i++)
+        {
+            Vector2 offset = Random.insideUnitCircle * spawnRadius;
+            Vector3 candidate = center + new Vector3(offset.x, 0f, offset.y);
+
+            // Debe caer sobre el NavMesh
+            if (!UnityEngine.AI.NavMesh.SamplePosition(candidate, out UnityEngine.AI.NavMeshHit hit, 2f, UnityEngine.AI.NavMesh.AllAreas))
+                continue;
+
+            // Debe estar libre de otros enemigos
+            if (Physics.CheckSphere(hit.position, enemyClearance, enemyLayer))
+                continue;
+
+            result = hit.position;
+            return true;
+        }
+
+        // Si no encontró hueco, usa el punto original (mejor eso que no spawnear)
+        result = center;
+        return false;
     }
 
     private void HandleEnemyDeath(PooledEnemy enemy)

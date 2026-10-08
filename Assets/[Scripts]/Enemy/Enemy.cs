@@ -12,11 +12,19 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     [Header("Detection & Attack")]
     [SerializeField] protected float detectionRange = 8f;
-    [SerializeField] protected float attackRange = 2.5f;
+    [SerializeField] protected float attackRange = 1f;
     [SerializeField] protected float attackCooldown = 1.7f;   // segundos entre golpes
     [SerializeField] protected GameObject experienceOrbPrefab;
     protected PooledEnemy pooledEnemyComponent;
     [SerializeField] private Animator animator;
+
+    [Header("Attack Hitbox")]
+    [SerializeField] protected GameObject attackHitbox;        // hijo con SphereCollider (Is Trigger)
+    [SerializeField] protected float hitboxActiveTime = 0.2f;  // cuánto tiempo queda activa la esfera
+
+    private float hitboxTimer;
+    private bool hitboxActive;
+    private bool hasHitThisAttack;
 
     // Componentes de navegación y física
     protected NavMeshAgent agent;
@@ -60,6 +68,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void OnDisable()
     {
+        DeactivateHitbox();
         if (gameManager != null)
             gameManager.onChangeGameState -= OnChangeGameStateCallback;
 
@@ -86,6 +95,11 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
         if (attackTimer > 0f)
             attackTimer -= Time.deltaTime;
+
+        if (attackTimer > 0f)
+            attackTimer -= Time.deltaTime;
+
+        UpdateHitbox();
 
         if (animator != null)
             animator.Play("Caminar");
@@ -147,14 +161,53 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     // El golpe en sí. Los hijos pueden sobrescribirlo (o dejarlo vacío).
     protected virtual void PerformAttack()
     {
-        if (playerHealth == null || !playerHealth.canBeDamaged)
+        ActivateHitbox();
+    }
+
+    private void ActivateHitbox()
+    {
+        if (attackHitbox == null) return;
+        Debug.Log($"<color=yellow>{name} activa hitbox de ataque!</color>");
+
+        hasHitThisAttack = false;
+        hitboxActive = true;
+        hitboxTimer = hitboxActiveTime;
+        attackHitbox.SetActive(true);
+    }
+
+    private void DeactivateHitbox()
+    {
+        hitboxActive = false;
+        if (attackHitbox != null)
+            attackHitbox.SetActive(false);
+    }
+
+    private void UpdateHitbox()
+    {
+        if (!hitboxActive) return;
+
+        hitboxTimer -= Time.deltaTime;
+        if (hitboxTimer <= 0f)
+            DeactivateHitbox();
+    }
+
+    // Lo llama EnemyAttackHitbox cuando el trigger toca algo
+    public void OnHitboxTouched(Collider other)
+    {
+        if (!hitboxActive || hasHitThisAttack || isDead || isGamePaused)
+            return;
+
+        PlayerHealth ph = other.GetComponentInParent<PlayerHealth>();
+        if (ph == null || !ph.canBeDamaged)
             return;
 
         var pm = PlayerManager.Instance;
         if (pm != null && pm.isDead)
             return;
 
-        playerHealth.TakeDamage(damage);
+        hasHitThisAttack = true;   // un solo golpe por ataque
+        ph.TakeDamage(damage);
+        DeactivateHitbox();
     }
 
     // ---------------- VIDA ----------------
@@ -176,6 +229,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
+        DeactivateHitbox();
         isDead = true;
         currentHealth = 0f;
 
@@ -198,6 +252,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         isDead = false;
         currentHealth = maxHealth;
         attackTimer = 0f;
+        DeactivateHitbox();
         this.enabled = true;
 
         if (enemyCollider != null)
@@ -214,5 +269,19 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     {
         Instantiate(experienceOrbPrefab, transform.position, Quaternion.identity);
         pooledEnemyComponent?.Die();
+    }
+
+    public void Teleport(Vector3 position)
+    {
+        if (agent != null && agent.isActiveAndEnabled)
+            agent.Warp(position);
+        else
+            transform.position = position;
+
+        if (enemyRB != null)
+        {
+            enemyRB.linearVelocity = Vector3.zero;     // en Unity 2022 o anterior: enemyRB.velocity
+            enemyRB.angularVelocity = Vector3.zero;
+        }
     }
 }
