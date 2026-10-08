@@ -321,6 +321,8 @@ public class Projectile : MonoBehaviour
             return;
         }
 
+        Quaternion gummySpawn = Quaternion.Euler(-90f, 0f, 0f);
+
         if (gummyPrefab != null)
         {
             Vector3 spawnPosition = transform.position;
@@ -329,7 +331,7 @@ public class Projectile : MonoBehaviour
             Instantiate(
                 gummyPrefab,
                 spawnPosition,
-                transform.rotation
+                gummySpawn
             );
         }
 
