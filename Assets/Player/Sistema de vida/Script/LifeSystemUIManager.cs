@@ -130,7 +130,7 @@ public class LifeSystemUIManager : MonoBehaviour
         {
             // Ocupa solo la mitad izquierda del slot; la otra mitad queda visible el fondo vacio
             rect.anchorMin = new Vector2(0f, 0f);
-            rect.anchorMax = new Vector2(0.5f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
         }
