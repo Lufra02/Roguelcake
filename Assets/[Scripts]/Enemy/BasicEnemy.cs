@@ -21,7 +21,7 @@ public class BasicEnemy : Enemy
 
     [Header("Health & Damage Scaling")]
     [SerializeField] private float healthBonusPerRound = 15f;
-    [SerializeField] private float damageBonusPerRound = 2.5f;
+    [SerializeField] private float damageBonusPerRound = 1f;
 
     // --- Estado del dash (reemplaza a la corrutina) ---
     private float dashCooldownTimer;   // reemplaza a nextDashTime
@@ -47,7 +47,6 @@ public class BasicEnemy : Enemy
 
             maxHealth = 30f + (roundsCompleted * healthBonusPerRound);
             currentHealth = maxHealth;
-            damage = 10f + (roundsCompleted * damageBonusPerRound);
         }
 
         currentState = EnemyState.Normal;
