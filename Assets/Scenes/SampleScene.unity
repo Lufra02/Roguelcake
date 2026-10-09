@@ -4285,7 +4285,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 45
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -12924,7 +12924,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1262752313
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15417,6 +15417,10 @@ PrefabInstance:
     - target: {fileID: 6602691036885412166, guid: 20477e1948da72c438a443ec5b49a073, type: 3}
       propertyPath: m_Name
       value: Centro
+      objectReference: {fileID: 0}
+    - target: {fileID: 8020334260460728545, guid: 20477e1948da72c438a443ec5b49a073, type: 3}
+      propertyPath: m_Convex
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
