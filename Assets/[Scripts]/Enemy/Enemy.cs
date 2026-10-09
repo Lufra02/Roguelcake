@@ -47,6 +47,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         agent = GetComponent<NavMeshAgent>();
         pooledEnemyComponent = GetComponent<PooledEnemy>();
         animator = GetComponentInChildren<Animator>();
+        Debug.Log(damage);
 
         if (agent != null)
         {
@@ -96,8 +97,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         if (attackTimer > 0f)
             attackTimer -= Time.deltaTime;
 
-        if (attackTimer > 0f)
-            attackTimer -= Time.deltaTime;
 
         UpdateHitbox();
 
@@ -169,10 +168,10 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         if (attackHitbox == null) return;
         Debug.Log($"<color=yellow>{name} activa hitbox de ataque!</color>");
 
+        attackHitbox.SetActive(true);
         hasHitThisAttack = false;
         hitboxActive = true;
         hitboxTimer = hitboxActiveTime;
-        attackHitbox.SetActive(true);
     }
 
     private void DeactivateHitbox()
@@ -206,6 +205,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             return;
 
         hasHitThisAttack = true;   // un solo golpe por ataque
+        Debug.Log($"<color=red>{name} golpea al jugador con {damage} de daño!</color>");
         ph.TakeDamage(damage);
         DeactivateHitbox();
     }

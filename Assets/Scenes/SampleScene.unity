@@ -166,7 +166,7 @@ MonoBehaviour:
   waveSpawnInterval: 0.15
   completedRounds: 0
   roundText: {fileID: 715025660}
-  initialWaveSize: 10
+  initialWaveSize: 1
   enemiesIncreasePerRound: 5
   gracePeriodDuration: 5
   periodicSpawnInterval: 5
