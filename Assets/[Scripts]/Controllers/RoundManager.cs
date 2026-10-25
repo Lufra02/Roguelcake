@@ -85,7 +85,7 @@ public class RoundManager : MonoBehaviour
 
         if (spawnPoints == null || spawnPoints.Length == 0)
         {
-            Debug.LogError("[RoundManager] No hay spawn points configurados.", this);
+            // Debug.LogError("[RoundManager] No hay spawn points configurados.", this);
             return;
         }
 
@@ -146,7 +146,7 @@ public class RoundManager : MonoBehaviour
 
         // SE TERMINÓ LA RONDA: Aquí se incrementa la variable serializada
         completedRounds++;
-        Debug.Log($"<color=green>[RoundManager] ¡Ronda terminada! Total completadas: {completedRounds}. Tiempo de gracia: {gracePeriodDuration}s...</color>");
+        // Debug.Log($"<color=green>[RoundManager] ¡Ronda terminada! Total completadas: {completedRounds}. Tiempo de gracia: {gracePeriodDuration}s...</color>");
     }
 
     // ---------------- RONDAS ----------------
@@ -163,7 +163,7 @@ public class RoundManager : MonoBehaviour
         waveSpawnIndex = 0;
         waveSpawnTimer = 0f;
 
-        Debug.Log($"<color=cyan>[RoundManager] Iniciando Ronda {completedRounds + 1}. Enemigos de oleada: {enemiesToSpawn}</color>");
+        // Debug.Log($"<color=cyan>[RoundManager] Iniciando Ronda {completedRounds + 1}. Enemigos de oleada: {enemiesToSpawn}</color>");
         UpdateRoundUI();
     }
     private void UpdateRoundUI()
@@ -208,7 +208,7 @@ public class RoundManager : MonoBehaviour
         ObjectPool selectedPool = GetEnemyPool();
         if (selectedPool == null)
         {
-            Debug.LogError("[RoundManager] No se encontró un ObjectPool.");
+            // Debug.LogError("[RoundManager] No se encontró un ObjectPool.");
             return;
         }
 

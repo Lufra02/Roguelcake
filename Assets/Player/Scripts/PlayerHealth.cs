@@ -25,6 +25,7 @@ public class PlayerHealth : Health
     [SerializeField] [UnityEngine.Range(0.0f, 10.0f)] private float horizontalForceMultiplier = 1f;
     [SerializeField] [UnityEngine.Range(0.0f, 10.0f)] private float verticalForceMultiplier = 1f;
 
+
     private void Awake()
     {
         stats = GetComponent<PlayerStats>();
