@@ -78,7 +78,13 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateAnimator()
     {
-        animationManager?.SetMovement(moveInput.magnitude);
+        // El blend tree se calcula respecto al apuntado, no respecto a los ejes del mundo.
+        // Por ello, avanzar hacia el mouse siempre produce Vertical = 1.
+        Vector3 aimRight = Vector3.Cross(Vector3.up, aimDirection).normalized;
+        float horizontal = Vector3.Dot(moveInput, aimRight);
+        float vertical = Vector3.Dot(moveInput, aimDirection);
+
+        animationManager?.SetMovement(horizontal, vertical);
     }
 
     private void ReadMovementInput()
@@ -214,7 +220,6 @@ public class PlayerController : MonoBehaviour
     {
         if (direction.sqrMagnitude < 0.0001f)
             return;
-
         aimDirection = direction.normalized;
 
         Quaternion lookRotation =

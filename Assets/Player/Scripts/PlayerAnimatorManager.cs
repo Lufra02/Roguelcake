@@ -9,8 +9,9 @@ public class PlayerAnimationManager : MonoBehaviour
     [Tooltip("Si se deja vacío, se busca automáticamente en este objeto o en sus hijos (normal si el Animator está en el modelo 3D, separado de la lógica).")]
     [SerializeField] private Animator animator;
 
-    // Parámetro float continuo (0 a 1) que controla el blend Idle <-> Movimiento.
-    private static readonly int MovementHash = Animator.StringToHash("Movement");
+    // Parámetros del Blend Tree 2D: el movimiento se expresa respecto al apuntado.
+    private static readonly int HorizontalHash = Animator.StringToHash("Horizontal");
+    private static readonly int VerticalHash = Animator.StringToHash("Vertical");
 
     // Triggers: se disparan una sola vez y el propio Animator decide cuándo "consumirlos".
     // Son el patrón correcto para ataques u otras acciones puntuales que no necesitan
@@ -56,11 +57,13 @@ public class PlayerAnimationManager : MonoBehaviour
 
     // --- Movimiento ---
 
-    // Llamado cada frame desde PlayerController con moveInput.magnitude (0 = quieto, 1 = velocidad máxima).
-    public void SetMovement(float normalizedSpeed)
+    // Llamado desde PlayerController con valores locales al apuntado.
+    // Horizontal: -1 izquierda, 1 derecha. Vertical: -1 atrás, 1 adelante.
+    public void SetMovement(float horizontal, float vertical)
     {
         if (animator == null) return;
-        animator.SetFloat(MovementHash, normalizedSpeed);
+        animator.SetFloat(HorizontalHash, horizontal);
+        animator.SetFloat(VerticalHash, vertical);
     }
 
     public void PlayOnTakeAnimation(string animationName)
