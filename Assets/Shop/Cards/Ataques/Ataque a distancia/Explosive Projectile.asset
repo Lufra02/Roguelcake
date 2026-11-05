@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Explosive Projectile
   m_EditorClassIdentifier: Assembly-CSharp::ShopCard
   cardTitle: Explosive Bullet
-  cardImage: {fileID: 0}
+  cardImage: {fileID: -1047827355, guid: 0dc519526a29ee445bf3cf82b7c5c78e, type: 3}
   cost: 0
   description: Bala explosiva
   effect: 13
@@ -23,3 +23,4 @@ MonoBehaviour:
   ExplosiveUpgrade: 1
   HugeBulletUpgrade: 0
   IsUnlockCard: 1
+  isMaxHealth: 0

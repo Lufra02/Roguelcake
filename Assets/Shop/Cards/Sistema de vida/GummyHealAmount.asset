@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GummyHealAmount
   m_EditorClassIdentifier: 
   cardTitle: Vida x gomita
-  cardImage: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  cardImage: {fileID: -171056483, guid: 0dc519526a29ee445bf3cf82b7c5c78e, type: 3}
   cost: 25
   description: Mayor regeneracion por gomita recogida
   effect: 3
@@ -23,3 +23,4 @@ MonoBehaviour:
   ExplosiveUpgrade: 0
   HugeBulletUpgrade: 0
   IsUnlockCard: 0
+  isMaxHealth: 0

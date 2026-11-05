@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Increase Projectile Rebounds
   m_EditorClassIdentifier: Assembly-CSharp::ShopCard
   cardTitle: Increase Projectile Rebounds
-  cardImage: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  cardImage: {fileID: -1047827355, guid: 0dc519526a29ee445bf3cf82b7c5c78e, type: 3}
   cost: 25
   description: Incrementa los rebotes en el proyectil
   effect: 12
@@ -23,3 +23,4 @@ MonoBehaviour:
   ExplosiveUpgrade: 0
   HugeBulletUpgrade: 0
   IsUnlockCard: 0
+  isMaxHealth: 0

@@ -13,9 +13,14 @@ MonoBehaviour:
   m_Name: Increase Movement Speed
   m_EditorClassIdentifier: Assembly-CSharp::ShopCard
   cardTitle: gotta go fast
-  cardImage: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  cardImage: {fileID: 314218360, guid: 0dc519526a29ee445bf3cf82b7c5c78e, type: 3}
   cost: 25
   description: Mayor velocidad de movimiento
   effect: 4
   effectValue: 10
   effectValueDecimal: 0.3
+  BounceUpgrade: 0
+  ExplosiveUpgrade: 0
+  HugeBulletUpgrade: 0
+  IsUnlockCard: 0
+  isMaxHealth: 0
