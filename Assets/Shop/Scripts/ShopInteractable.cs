@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 // Colócalo en el GameObject de la tienda, junto con un Collider en la capa Interactable.
@@ -43,7 +45,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         if (!isOpen)
             return;
 
-        HandleGamepadInput();
+        HandleNavigationInput();
     }
 
     // Apertura de tienda desde subida de nivel
@@ -70,6 +72,8 @@ public class ShopInteractable : MonoBehaviour, IInteractable
 
         if (shopCanvas != null)
             shopCanvas.SetActive(true);
+
+        UpdateCardSelection();
     }
 
     // Llama a este método desde el botón de cerrar de la interfaz.
@@ -81,57 +85,58 @@ public class ShopInteractable : MonoBehaviour, IInteractable
         if (shopCanvas != null)
             shopCanvas.SetActive(false);
 
+        ClearCardSelection();
+
         playerController?.SetMovementEnabled(true);
         playerCombat?.SetCombatEnabled(true);
     }
 
     // Administra el movimiento del control
-    private void HandleGamepadInput()
+    private void HandleNavigationInput()
     {
         Gamepad gamepad = Gamepad.current;
+        Keyboard keyboard = Keyboard.current;
 
-        if (gamepad == null)
-            return;
+        // Comprar carta seleccionada con A/Cross, Enter o Espacio.
+        bool submitPressed = gamepad != null && gamepad.buttonSouth.wasPressedThisFrame;
+        if (keyboard != null)
+            submitPressed |= keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame;
 
-        // Comprar carta seleccionada con A / Cross
-        if (gamepad.buttonSouth.wasPressedThisFrame)
+        if (submitPressed)
         {
             PurchaseSelectedCard();
             return;
         }
 
-        HandleCardNavigation(gamepad);
-    }
-
-    private void HandleCardNavigation(Gamepad gamepad)
-    {
         if (navigationTimer > 0f)
         {
             navigationTimer -= Time.unscaledDeltaTime;
             return;
         }
 
-        Vector2 navigation = gamepad.leftStick.ReadValue();
+        bool moveLeft = false;
+        bool moveRight = false;
 
-        // También permite utilizar D-Pad
-        if (gamepad.dpad.left.isPressed)
-            navigation.x = -1f;
+        if (gamepad != null)
+        {
+            Vector2 navigation = gamepad.leftStick.ReadValue();
+            moveLeft |= navigation.x < -0.5f || gamepad.dpad.left.isPressed;
+            moveRight |= navigation.x > 0.5f || gamepad.dpad.right.isPressed;
+        }
 
-        if (gamepad.dpad.right.isPressed)
-            navigation.x = 1f;
+        // Navegación horizontal con flechas o A/D.
+        if (keyboard != null)
+        {
+            moveLeft |= keyboard.leftArrowKey.wasPressedThisFrame || keyboard.aKey.wasPressedThisFrame;
+            moveRight |= keyboard.rightArrowKey.wasPressedThisFrame || keyboard.dKey.wasPressedThisFrame;
+        }
 
-        if (gamepad.dpad.up.isPressed)
-            navigation.y = 1f;
-
-        if (gamepad.dpad.down.isPressed)
-            navigation.y = -1f;
-
-        if (navigation.x > 0.5f)
+        if (moveRight)
         {
             SelectNextCard();
             navigationTimer = navigationCooldown;
         }
-        else if (navigation.x < -0.5f)
+        else if (moveLeft)
         {
             SelectPreviousCard();
             navigationTimer = navigationCooldown;
@@ -184,6 +189,7 @@ public class ShopInteractable : MonoBehaviour, IInteractable
     private void UpdateCardSelection()
     {
         int activeIndex = 0;
+        GameObject selectedGameObject = null;
 
         for (int i = 0; i < shopCardButtons.Length; i++)
         {
@@ -192,9 +198,34 @@ public class ShopInteractable : MonoBehaviour, IInteractable
             if (button == null || !button.gameObject.activeSelf)
                 continue;
 
-            button.SetSelected(activeIndex == selectedCardIndex);
+            bool isSelected = activeIndex == selectedCardIndex;
+            button.SetSelected(isSelected);
+            if (isSelected)
+                selectedGameObject = button.gameObject;
 
             activeIndex++;
+        }
+
+        if (selectedGameObject != null && shopCanvas != null && shopCanvas.activeInHierarchy && EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(selectedGameObject);
+    }
+
+    private void ClearCardSelection()
+    {
+        if (shopCardButtons != null)
+        {
+            foreach (ShopCardButton button in shopCardButtons)
+            {
+                if (button != null)
+                    button.SetSelected(false);
+            }
+        }
+
+        if (EventSystem.current != null && shopCanvas != null &&
+            EventSystem.current.currentSelectedGameObject != null &&
+            EventSystem.current.currentSelectedGameObject.transform.IsChildOf(shopCanvas.transform))
+        {
+            EventSystem.current.SetSelectedGameObject(null);
         }
     }
 
@@ -270,6 +301,14 @@ public class ShopInteractable : MonoBehaviour, IInteractable
             if (i < selectedCards.Count)
             {
                 button.gameObject.SetActive(true);
+                Button uiButton = button.GetComponent<Button>();
+                if (uiButton != null)
+                {
+                    Navigation navigation = uiButton.navigation;
+                    navigation.mode = Navigation.Mode.None;
+                    uiButton.navigation = navigation;
+                }
+
                 button.SetCard(selectedCards[i]);
                 button.SetPlayer(playerStats);
                 button.OnPurchased += HandleCardPurchased;

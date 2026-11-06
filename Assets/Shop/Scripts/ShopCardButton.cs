@@ -5,18 +5,39 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // Colócalo en el botón de una tarjeta de la tienda y conecta sus referencias de UI.
-public class ShopCardButton : MonoBehaviour, IPointerEnterHandler
+public class ShopCardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private ShopCard card;
+    private Button purchaseButton;
 
     [Header("UI")]
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Image imageDisplay;
-    [SerializeField] private TMP_Text costText;
     [SerializeField] private TMP_Text descriptionText;
-    [SerializeField] private Button purchaseButton;
 
-    [SerializeField] private GameObject selectionHighlight;
+
+    [Header("Settings")]
+    [SerializeField] public Sprite offHover;
+    [SerializeField] public Sprite onHover;
+
+    [SerializeField] private Image backGround;
+
+
+    [SerializeField] public GameObject hoverIconGO;
+
+    [Header("Game feel")]
+    [SerializeField, Min(1f)] private float highlightedWidthScale = 1.06f;
+    [SerializeField, Min(1f)] private float highlightedHeightScale = 1.025f;
+    [SerializeField, Min(1f)] private float scaleSpringStrength = 280f;
+    [SerializeField, Min(0f)] private float scaleSpringDamping = 26f;
+    [SerializeField, Min(0f)] private float entryBounce = 6f;
+
+    private bool isPointerOver;
+    private bool isSelected;
+    private bool wasHighlighted;
+    private RectTransform cardTransform;
+    private Vector3 baseScale;
+    private Vector3 scaleVelocity;
 
     private PlayerStats playerStats;
     private bool purchased;
@@ -31,13 +52,49 @@ public class ShopCardButton : MonoBehaviour, IPointerEnterHandler
 
     private void Awake()
     {
+        cardTransform = transform as RectTransform;
+        if (cardTransform != null)
+            baseScale = cardTransform.localScale;
+
         if (purchaseButton == null)
             purchaseButton = GetComponent<Button>();
+
+        if (backGround == null && purchaseButton != null)
+            backGround = purchaseButton.targetGraphic as Image;
 
         if (purchaseButton != null)
             purchaseButton.onClick.AddListener(Purchase);
 
+        isPointerOver = false;
+        isSelected = false;
+
         RefreshView();
+        RefreshSelectionVisual();
+    }
+
+    private void Update()
+    {
+        if (cardTransform == null)
+            return;
+
+        bool highlighted = isSelected || isPointerOver;
+        Vector3 targetScale = highlighted
+            ? new Vector3(baseScale.x * highlightedWidthScale, baseScale.y * highlightedHeightScale, baseScale.z)
+            : baseScale;
+
+        if (highlighted && !wasHighlighted)
+        {
+            Vector3 scaleDifference = targetScale - baseScale;
+            scaleVelocity += scaleDifference * entryBounce;
+        }
+
+        wasHighlighted = highlighted;
+
+        float deltaTime = Time.unscaledDeltaTime;
+        Vector3 springForce = (targetScale - cardTransform.localScale) * scaleSpringStrength;
+        Vector3 dampingForce = scaleVelocity * scaleSpringDamping;
+        scaleVelocity += (springForce - dampingForce) * deltaTime;
+        cardTransform.localScale += scaleVelocity * deltaTime;
     }
 
     public void SetPlayer(PlayerStats stats)
@@ -54,15 +111,23 @@ public class ShopCardButton : MonoBehaviour, IPointerEnterHandler
 
     public void SetSelected(bool selected)
     {
-        if (selectionHighlight != null)
-            selectionHighlight.SetActive(selected);
+        isSelected = selected;
+        RefreshSelectionVisual();
     }
 
     // Requerido por IPointerEnterHandler: Unity lo llama automáticamente cuando el cursor
     // entra en el área de este botón (necesita un Canvas con GraphicRaycaster y un EventSystem).
     public void OnPointerEnter(PointerEventData eventData)
     {
+        isPointerOver = true;
+        RefreshSelectionVisual();
         OnHoverEnter?.Invoke(this);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        isPointerOver = false;
+        RefreshSelectionVisual();
     }
 
     public void Purchase()
@@ -83,7 +148,6 @@ public class ShopCardButton : MonoBehaviour, IPointerEnterHandler
         if (card == null) return;
 
         if (titleText != null) titleText.text = card.Title;
-        if (costText != null) costText.text = card.Cost.ToString();
         if (descriptionText != null) descriptionText.text = card.Description;
 
         if (imageDisplay != null)
@@ -94,5 +158,20 @@ public class ShopCardButton : MonoBehaviour, IPointerEnterHandler
 
         if (purchaseButton != null)
             purchaseButton.interactable = !purchased;
+    }
+
+    private void RefreshSelectionVisual()
+    {
+        bool highlighted = isSelected || isPointerOver;
+
+        if (backGround != null)
+        {
+            Sprite targetSprite = highlighted ? onHover : offHover;
+            if (targetSprite != null)
+                backGround.sprite = targetSprite;
+        }
+
+        if (hoverIconGO != null)
+            hoverIconGO.SetActive(highlighted);
     }
 }

@@ -8151,15 +8151,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3036583100108960284, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -8
+      value: 51
       objectReference: {fileID: 0}
     - target: {fileID: 3976650509739195342, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -624.93
+      value: -625
       objectReference: {fileID: 0}
     - target: {fileID: 3976650509739195342, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 211.71
+      value: 267.5
       objectReference: {fileID: 0}
     - target: {fileID: 4091201487121163457, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_Name
@@ -8175,7 +8175,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7288719373598364614, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_fontSize
-      value: 67.15
+      value: 69.55
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9500,15 +9500,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3036583100108960284, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -8
+      value: 51
       objectReference: {fileID: 0}
     - target: {fileID: 3976650509739195342, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -624.93
+      value: -625
       objectReference: {fileID: 0}
     - target: {fileID: 3976650509739195342, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 211.71
+      value: 267.5
       objectReference: {fileID: 0}
     - target: {fileID: 4091201487121163457, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_Name
@@ -9524,7 +9524,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7288719373598364614, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
       propertyPath: m_fontSize
-      value: 67.15
+      value: 69.55
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13821,10 +13821,10 @@ RectTransform:
   m_Children:
   - {fileID: 1850010166}
   - {fileID: 2011555632}
+  - {fileID: 715025659}
   - {fileID: 1463387686}
   - {fileID: 1270736176}
   - {fileID: 1262752313}
-  - {fileID: 715025659}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -14936,7 +14936,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.99607843}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.6666667}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -21135,9 +21135,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: CardView (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 7288719373598364614, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
-      propertyPath: m_fontSize
-      value: 67.15
+    - target: {fileID: 6522711155046958620, guid: f47b77ca5396c594dbd2b6de95792db2, type: 3}
+      propertyPath: entryBounce
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
