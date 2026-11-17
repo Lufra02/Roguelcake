@@ -71,7 +71,13 @@ public class PlayerHealth : Health
     {
         base.TakeDamage(dmg);
         UpdateDamageVisuals();
-        if (CurrentHealth <= 0) 
+        if (PlayerManager.Instance != null && PlayerManager.Instance.playerAnimationManager != null)
+        {
+            PlayerManager.Instance.playerAnimationManager.PlayDamageEffect();
+        }
+        // -----------------------------------------------------------
+
+        if (CurrentHealth <= 0)
         {
             Die();
         }

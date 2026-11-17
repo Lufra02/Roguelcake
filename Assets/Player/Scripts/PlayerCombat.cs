@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 // Maneja el ataque cuerpo a cuerpo (principal) y el disparo de proyectil (secundario) en 3D.
 // Usa el paquete nuevo "Input System" (Mouse.current / Gamepad.current).
@@ -77,7 +78,18 @@ public class PlayerCombat : MonoBehaviour
 
     public void TryToMeeleAttack()
     {
+        // 1. Reproduce la animación como siempre
         PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation("Physical_Attack_01");
+
+        // 2. ¡Fuerza aquí mismo la creación del Slash!
+        // (Asumiendo que tu script PlayerAnimationManager está en el mismo personaje)
+        // Llama al AnimationManager para que espere 3 frames y lance el slash
+        PlayerAnimationManager animMgr = GetComponent<PlayerAnimationManager>();
+        if (animMgr != null)
+        {
+            // Pásale segundos en lugar de frames (por ejemplo, 0.15 segundos para empezar a probar)
+            animMgr.InvokeSlashWithDelay(0.3f);
+        }
         lastMeleeTime = Time.time;
     }
 

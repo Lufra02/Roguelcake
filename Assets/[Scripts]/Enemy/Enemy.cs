@@ -101,7 +101,14 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         UpdateHitbox();
 
         if (animator != null)
-            animator.Play("Caminar");
+        {
+            // Solo reproduce caminar si la distancia es mayor al rango de ataque (es decir, está persiguiendo)
+            float distanciaActual = Vector3.Distance(transform.position, target.position);
+            if (distanciaActual > attackRange)
+            {
+                animator.Play("Caminar");
+            }
+        }
 
         float distance = Vector3.Distance(transform.position, target.position);
 
@@ -161,6 +168,12 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     protected virtual void PerformAttack()
     {
         ActivateHitbox();
+
+        // Activa la animación de ataque si el Animator existe
+        if (animator != null)
+        {
+            animator.SetTrigger("AttackTrigger");
+        }
     }
 
     private void ActivateHitbox()

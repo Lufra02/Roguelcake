@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 // Punto único para disparar y controlar las animaciones del jugador. Cualquier otro
 // script (movimiento, combate, vida, etc.) le pide a este manager que reproduzca algo,
@@ -8,6 +9,10 @@ public class PlayerAnimationManager : MonoBehaviour
 {
     [Tooltip("Si se deja vacío, se busca automáticamente en este objeto o en sus hijos (normal si el Animator está en el modelo 3D, separado de la lógica).")]
     [SerializeField] private Animator animator;
+
+    [Header("Efectos de Ataque")]
+    [SerializeField] private GameObject slashEffectPrefab;
+    [SerializeField] private Transform slashSpawnPoint;
 
     // Parámetros del Blend Tree 2D: el movimiento se expresa respecto al apuntado.
     private static readonly int HorizontalHash = Animator.StringToHash("Horizontal");
@@ -20,6 +25,10 @@ public class PlayerAnimationManager : MonoBehaviour
     private static readonly int ShootHash = Animator.StringToHash("Shoot");
 
     private GameManager gameManager;
+
+
+
+
 
     private void Awake()
     {
@@ -84,6 +93,20 @@ public class PlayerAnimationManager : MonoBehaviour
         PlayTrigger(ShootHash);
     }
 
+    private void TriggerSlashEffect()
+    {
+        Debug.Log("¡Se intentó lanzar el slash!");
+        if (slashEffectPrefab != null && slashSpawnPoint != null)
+        {
+            GameObject fx = Instantiate(slashEffectPrefab, slashSpawnPoint.position, slashSpawnPoint.rotation);
+            Destroy(fx, 2f); // Se destruye solo a los 2 segundos para no acumular basura en memoria
+        }
+        else
+        {
+            Debug.LogError("¡Falta asignar el Prefab o el SpawnPoint en el Inspector del PlayerAnimationManager!");
+        }
+    }
+
     // --- Genérico ---
 
     // Punto de entrada por nombre, para cuando agregues animaciones nuevas (esquiva, recibir
@@ -104,5 +127,54 @@ public class PlayerAnimationManager : MonoBehaviour
     {
         if (animator == null) return;
         animator.ResetTrigger(triggerName);
+    }
+    public void InvokeSlashWithDelay(float delaySeconds)
+    {
+        StartCoroutine(SpawnSlashDelayed(delaySeconds));
+    }
+
+    private IEnumerator SpawnSlashDelayed(float delaySeconds)
+    {
+        // Espera exactamente los segundos indicados antes de mostrar el slash
+        yield return new WaitForSeconds(delaySeconds);
+
+        if (slashEffectPrefab != null && slashSpawnPoint != null)
+        {
+            GameObject fx = Instantiate(slashEffectPrefab, slashSpawnPoint.position, slashSpawnPoint.rotation);
+
+            ParticleSystem ps = fx.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                ps.Stop();
+                ps.Play();
+            }
+
+            Destroy(fx, 2f);
+        }
+    }
+    [SerializeField] private GameObject damageEffectPrefab; // Arrastra aquí tu prefab de daño en el Inspector
+    [SerializeField] private Transform damageSpawnPoint;   // El punto donde nace (puede ser el centro del player o un punto específico)
+
+    public void PlayDamageEffect()
+    {
+        if (damageEffectPrefab != null)
+        {
+            // Si no creaste un punto específico, usa la posición actual del personaje (transform.position)
+            Transform spawnPoint = damageSpawnPoint != null ? damageSpawnPoint : transform;
+
+            GameObject fx = Instantiate(damageEffectPrefab, spawnPoint.position, spawnPoint.rotation);
+
+            // Opcional: Si el efecto debe seguir al personaje mientras dura, puedes emparentarlo:
+            // fx.transform.SetParent(transform);
+
+            ParticleSystem ps = fx.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                ps.Stop();
+                ps.Play();
+            }
+
+            Destroy(fx, 2f); // Limpieza de memoria
+        }
     }
 }
