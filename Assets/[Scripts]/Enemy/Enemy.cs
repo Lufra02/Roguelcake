@@ -4,9 +4,13 @@ using System.Collections;
 
 public abstract class Enemy : MonoBehaviour, IDamageable
 {
+    [Header("Hit Particle Effect")]
+    [SerializeField] private GameObject hitParticlePrefab; 
+    [SerializeField] private Transform hitParticleSpawnPoint; 
+
     [Header("Hit Flash Effect")]
-    [SerializeField] private Renderer[] enemyRenderers; // Cambió a arreglo
-    [SerializeField] private Material whiteFlashMaterial; // <--- NUEVO: Arrastra aquí un material blanco básico
+    [SerializeField] private Renderer[] enemyRenderers; 
+    [SerializeField] private Material whiteFlashMaterial; 
     [SerializeField] private float flashDuration = 0.1f;
 
     private Coroutine flashCoroutine;
@@ -267,6 +271,19 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void OnDamageTaken(float damage)
     {
+        if (hitParticlePrefab != null)
+        {
+            Transform spawnPos = hitParticleSpawnPoint != null ? hitParticleSpawnPoint : transform;
+            GameObject hitFx = Instantiate(hitParticlePrefab, spawnPos.position, Quaternion.identity);
+
+            ParticleSystem ps = hitFx.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                ps.Stop();
+                ps.Play();
+            }
+            Destroy(hitFx, 2f); // Limpieza automática de memoria
+        }
         if (enemyRenderers != null && enemyRenderers.Length > 0 && !isDead)
         {
             if (flashCoroutine != null)

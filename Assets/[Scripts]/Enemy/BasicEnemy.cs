@@ -9,6 +9,7 @@ public class BasicEnemy : Enemy
     [SerializeField] private int dashUnlockRound = 3;
     [SerializeField] private int enrageUnlockRound = 5;
 
+
     [Header("Dash Settings")]
     [SerializeField] private float dashCooldown = 8f;
     [SerializeField] private float dashSpeedMultiplier = 3f;

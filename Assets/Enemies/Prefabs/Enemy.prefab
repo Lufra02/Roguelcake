@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2323846585774414441
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1356971258806113074}
+  m_Layer: 0
+  m_Name: Particle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1356971258806113074
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2323846585774414441}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.051, z: -0.597}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3825246069305206362}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2396098674259183776
 GameObject:
   m_ObjectHideFlags: 0
@@ -50,6 +81,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41198d792bf371d6186456cde4882b99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicEnemy
+  hitParticlePrefab: {fileID: 1970551712841374033, guid: 2921ee9015936604cae2fd561dda4783, type: 3}
+  hitParticleSpawnPoint: {fileID: 1356971258806113074}
   enemyRenderers:
   - {fileID: 3623278769869196834}
   - {fileID: 5497256186293096574}
@@ -351,7 +384,10 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 04d85c8fe05cba049ab3973eee8c8ba3, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -2776764658658785910, guid: 84b665d9ea176924e8416bb91b789b61, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1356971258806113074}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 84b665d9ea176924e8416bb91b789b61, type: 3}
       insertIndex: -1
@@ -410,6 +446,11 @@ SkinnedMeshRenderer:
 --- !u!137 &3623278769869196834 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: -2438546841019011598, guid: 84b665d9ea176924e8416bb91b789b61, type: 3}
+  m_PrefabInstance: {fileID: 7809508150493422544}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3825246069305206362 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -2776764658658785910, guid: 84b665d9ea176924e8416bb91b789b61, type: 3}
   m_PrefabInstance: {fileID: 7809508150493422544}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &5497256186293096574 stripped
