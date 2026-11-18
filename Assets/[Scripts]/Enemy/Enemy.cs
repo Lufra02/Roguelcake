@@ -167,7 +167,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     // El golpe en sí. Los hijos pueden sobrescribirlo (o dejarlo vacío).
     protected virtual void PerformAttack()
     {
-        ActivateHitbox();
+        //ActivateHitbox();
 
         // Activa la animación de ataque si el Animator existe
         if (animator != null)
@@ -176,10 +176,9 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    private void ActivateHitbox()
+    public void ActivateHitbox()
     {
         if (attackHitbox == null) return;
-        // Debug.Log($"<color=yellow>{name} activa hitbox de ataque!</color>");
 
         attackHitbox.SetActive(true);
         hasHitThisAttack = false;

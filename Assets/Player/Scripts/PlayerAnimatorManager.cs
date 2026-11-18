@@ -14,6 +14,12 @@ public class PlayerAnimationManager : MonoBehaviour
     [SerializeField] private GameObject slashEffectPrefab;
     [SerializeField] private Transform slashSpawnPoint;
 
+    [Header("Efecto de daño")]
+    [Tooltip("Objeto ya colocado en el Player. Debe contener un ParticleSystem y empezar desactivado.")]
+    [SerializeField] private GameObject damageEffect;
+    private ParticleSystem[] damageParticles;
+    private bool isDamageEffectPlaying;
+
     // Parámetros del Blend Tree 2D: el movimiento se expresa respecto al apuntado.
     private static readonly int HorizontalHash = Animator.StringToHash("Horizontal");
     private static readonly int VerticalHash = Animator.StringToHash("Vertical");
@@ -40,6 +46,12 @@ public class PlayerAnimationManager : MonoBehaviour
         {
             Debug.LogWarning($"[PlayerAnimationManager] No se encontró ningún Animator en {name} ni en sus hijos. Asígnalo manualmente en el Inspector.");
         }
+
+        if (damageEffect != null)
+        {
+            damageParticles = damageEffect.GetComponentsInChildren<ParticleSystem>(true);
+            damageEffect.SetActive(false);
+        }
     }
 
     private void Start()
@@ -49,6 +61,19 @@ public class PlayerAnimationManager : MonoBehaviour
         {
             gameManager.onChangeGameState += OnChangeGameStateCallback;
         }
+    }
+
+    private void Update()
+    {
+        if (!isDamageEffectPlaying) return;
+
+        foreach (ParticleSystem particle in damageParticles)
+        {
+            if (particle != null && particle.IsAlive(true)) return;
+        }
+
+        damageEffect.SetActive(false);
+        isDamageEffectPlaying = false;
     }
 
     // Congela/reanuda el Animator en el frame exacto donde iba, sin perder el estado actual.
@@ -140,7 +165,7 @@ public class PlayerAnimationManager : MonoBehaviour
 
         if (slashEffectPrefab != null && slashSpawnPoint != null)
         {
-            GameObject fx = Instantiate(slashEffectPrefab, slashSpawnPoint.position, slashSpawnPoint.rotation);
+            GameObject fx = Instantiate(slashEffectPrefab, slashSpawnPoint.position, slashSpawnPoint.rotation, gameObject.transform);
 
             ParticleSystem ps = fx.GetComponent<ParticleSystem>();
             if (ps != null)
@@ -152,29 +177,23 @@ public class PlayerAnimationManager : MonoBehaviour
             Destroy(fx, 2f);
         }
     }
-    [SerializeField] private GameObject damageEffectPrefab; // Arrastra aquí tu prefab de daño en el Inspector
-    [SerializeField] private Transform damageSpawnPoint;   // El punto donde nace (puede ser el centro del player o un punto específico)
-
     public void PlayDamageEffect()
     {
-        if (damageEffectPrefab != null)
+        if (damageEffect == null)
         {
-            // Si no creaste un punto específico, usa la posición actual del personaje (transform.position)
-            Transform spawnPoint = damageSpawnPoint != null ? damageSpawnPoint : transform;
-
-            GameObject fx = Instantiate(damageEffectPrefab, spawnPoint.position, spawnPoint.rotation);
-
-            // Opcional: Si el efecto debe seguir al personaje mientras dura, puedes emparentarlo:
-            // fx.transform.SetParent(transform);
-
-            ParticleSystem ps = fx.GetComponent<ParticleSystem>();
-            if (ps != null)
-            {
-                ps.Stop();
-                ps.Play();
-            }
-
-            Destroy(fx, 2f); // Limpieza de memoria
+            Debug.LogWarning("[PlayerAnimationManager] Falta asignar Damage Effect.", this);
+            return;
         }
+
+        damageEffect.SetActive(true);
+        foreach (ParticleSystem particle in damageParticles)
+        {
+            if (particle == null) continue;
+            particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            particle.Play(true);
+        }
+
+        isDamageEffectPlaying = damageParticles.Length > 0;
+        // shortcut: el efecto debe no estar en Loop; agrega un cierre explícito si se vuelve continuo.
     }
 }
