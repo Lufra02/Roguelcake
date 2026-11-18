@@ -1,8 +1,17 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public abstract class Enemy : MonoBehaviour, IDamageable
 {
+    [Header("Hit Flash Effect")]
+    [SerializeField] private Renderer[] enemyRenderers; // Cambió a arreglo
+    [SerializeField] private Material whiteFlashMaterial; // <--- NUEVO: Arrastra aquí un material blanco básico
+    [SerializeField] private float flashDuration = 0.1f;
+
+    private Coroutine flashCoroutine;
+    private Material[][] originalMaterials; // Guarda los materiales originales de cada pieza
+
     [Header("Main Attributes")]
     [SerializeField] protected float maxHealth = 100f;
     [SerializeField] protected float currentHealth;
@@ -42,6 +51,23 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected virtual void Awake()
     {
+        // Busca automáticamente TODOS los renderers que estén en este objeto y sus hijos
+        if (enemyRenderers == null || enemyRenderers.Length == 0)
+            enemyRenderers = GetComponentsInChildren<Renderer>();
+
+        // Guardamos los materiales originales de forma segura al iniciar
+        if (enemyRenderers != null && enemyRenderers.Length > 0)
+        {
+            originalMaterials = new Material[enemyRenderers.Length][];
+            for (int i = 0; i < enemyRenderers.Length; i++)
+            {
+                if (enemyRenderers[i] != null)
+                {
+                    originalMaterials[i] = enemyRenderers[i].materials;
+                }
+            }
+        }
+
         enemyRB = GetComponent<Rigidbody>();
         enemyCollider = GetComponent<Collider>();
         agent = GetComponent<NavMeshAgent>();
@@ -239,13 +265,39 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             Die();
     }
 
-    protected virtual void OnDamageTaken(float damage) { }
+    protected virtual void OnDamageTaken(float damage)
+    {
+        if (enemyRenderers != null && enemyRenderers.Length > 0 && !isDead)
+        {
+            if (flashCoroutine != null)
+                StopCoroutine(flashCoroutine);
+
+            flashCoroutine = StartCoroutine(FlashRoutine());
+        }
+    }
 
     protected virtual void Die()
     {
         DeactivateHitbox();
         isDead = true;
         currentHealth = 0f;
+
+        // Detenemos la corrutina de flash si estaba activa
+        if (flashCoroutine != null)
+            StopCoroutine(flashCoroutine);
+
+        // Restauramos materiales originales al morir para evitar bugs visuales en el pool
+        if (enemyRenderers != null && originalMaterials != null)
+        {
+            for (int i = 0; i < enemyRenderers.Length; i++)
+            {
+                if (enemyRenderers[i] != null && i < originalMaterials.Length)
+                {
+                    enemyRenderers[i].materials = originalMaterials[i];
+                    enemyRenderers[i].enabled = true;
+                }
+            }
+        }
 
         if (agent != null && agent.enabled)
             agent.enabled = false;
@@ -268,6 +320,19 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         attackTimer = 0f;
         DeactivateHitbox();
         this.enabled = true;
+
+        // Restauramos renderers y materiales al inicializar (indispensable para Object Pooling)
+        if (enemyRenderers != null && originalMaterials != null)
+        {
+            for (int i = 0; i < enemyRenderers.Length; i++)
+            {
+                if (enemyRenderers[i] != null && i < originalMaterials.Length)
+                {
+                    enemyRenderers[i].materials = originalMaterials[i];
+                    enemyRenderers[i].enabled = true;
+                }
+            }
+        }
 
         if (enemyCollider != null)
             enemyCollider.enabled = true;
@@ -296,6 +361,42 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         {
             enemyRB.linearVelocity = Vector3.zero;     // en Unity 2022 o anterior: enemyRB.velocity
             enemyRB.angularVelocity = Vector3.zero;
+        }
+    }
+
+    private IEnumerator FlashRoutine()
+    {
+        // Si no asignaste un material blanco en el Inspector, salimos para evitar errores
+        if (whiteFlashMaterial == null) yield break;
+
+        // 1. Cambiamos todos los materiales de las piezas al material blanco
+        foreach (var rend in enemyRenderers)
+        {
+            if (rend != null)
+            {
+                rend.enabled = true;
+                Material[] whiteMats = new Material[rend.materials.Length];
+                for (int i = 0; i < whiteMats.Length; i++)
+                {
+                    whiteMats[i] = whiteFlashMaterial; // Reemplaza por el blanco
+                }
+                rend.materials = whiteMats;
+            }
+        }
+
+        // 2. Esperamos el tiempo del destello
+        yield return new WaitForSeconds(flashDuration);
+
+        // 3. Restauramos los materiales originales exactos
+        if (!isDead && enemyRenderers != null)
+        {
+            for (int i = 0; i < enemyRenderers.Length; i++)
+            {
+                if (enemyRenderers[i] != null && originalMaterials != null && i < originalMaterials.Length)
+                {
+                    enemyRenderers[i].materials = originalMaterials[i];
+                }
+            }
         }
     }
 }
