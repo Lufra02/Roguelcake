@@ -124,6 +124,9 @@ public class PlayerStats : MonoBehaviour
     {
         currentLevel++;
         currentXP = 0;
+
+        playerManager.isInShop = true;
+
         requiredXP = CalculateRequiredXP(currentLevel);
 
         // INTEGRAR LA TIENDA DE EXP

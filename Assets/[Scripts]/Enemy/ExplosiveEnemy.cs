@@ -40,7 +40,7 @@ public class ExplosiveEnemy : Enemy
 
     protected override void Update()
     {
-        if (isGamePaused)
+        if (IsPausedOrInShop())
             return;
 
         if (isPreparingExplosion)
