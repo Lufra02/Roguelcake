@@ -51,6 +51,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     // Pausa (los hijos solo leen isGamePaused)
     private GameManager gameManager;
+    private PlayerManager playerManager;
     protected bool isGamePaused;
 
     protected virtual void Awake()
@@ -95,6 +96,8 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         gameManager = GameManager.Instance;
         if (gameManager != null)
             gameManager.onChangeGameState += OnChangeGameStateCallback;
+
+        playerManager = PlayerManager.Instance;
     }
 
     protected virtual void OnDisable()
@@ -110,18 +113,33 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     {
         isGamePaused = newState == GameState.Pause;
 
+        IsPausedOrInShop();
+    }
+
+    protected bool IsPausedOrInShop()
+    {
+        if (playerManager == null)
+            playerManager = PlayerManager.Instance;
+
+        bool shouldStop = isGamePaused || (playerManager != null && playerManager.isInShop);
+
         if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
-            agent.isStopped = isGamePaused;
+            agent.isStopped = shouldStop;
 
         if (animator != null)
-            animator.speed = isGamePaused ? 0f : 1f;   // congela también la animación
+            animator.speed = shouldStop ? 0f : 1f;
+
+        Debug.Assert(!shouldStop || agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh || agent.isStopped,
+            "Un enemigo detenido debe tener su NavMeshAgent detenido.", this);
+
+        return shouldStop;
     }
 
     // ---------------- UPDATE ----------------
 
     protected virtual void Update()
     {
-        if (isGamePaused || isDead || target == null || agent == null)
+        if (IsPausedOrInShop() || isDead || target == null || agent == null)
             return;
 
         if (attackTimer > 0f)
@@ -235,7 +253,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     // Lo llama EnemyAttackHitbox cuando el trigger toca algo
     public void OnHitboxTouched(Collider other)
     {
-        if (!hitboxActive || hasHitThisAttack || isDead || isGamePaused)
+        if (!hitboxActive || hasHitThisAttack || isDead || IsPausedOrInShop())
             return;
 
         PlayerHealth ph = other.GetComponentInParent<PlayerHealth>();

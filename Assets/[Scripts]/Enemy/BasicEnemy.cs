@@ -62,7 +62,7 @@ public class BasicEnemy : Enemy
 
     protected override void Update()
     {
-        if (isGamePaused || isDead || target == null || agent == null)
+        if (IsPausedOrInShop() || isDead || target == null || agent == null)
             return;
 
         // El cooldown corre siempre que no haya pausa (igual que antes con Time.time)

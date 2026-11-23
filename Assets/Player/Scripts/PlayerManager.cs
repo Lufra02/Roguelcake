@@ -80,12 +80,16 @@ public class PlayerManager : MonoBehaviour
     public void SetOpenShop(ShopInteractable shop)
     {
         openShop = shop;
+        isInShop = true;
     }
 
     public void ClearOpenShop(ShopInteractable shop)
     {
         if (openShop == shop)
+        {
             openShop = null;
+            isInShop = false;
+        }
     }
 
     //Esta es la funcion que quiero que se haga cada vez que pauso o despauso el juego
