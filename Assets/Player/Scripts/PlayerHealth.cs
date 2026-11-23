@@ -69,25 +69,40 @@ public class PlayerHealth : Health
 
     public override void TakeDamage(float dmg)
     {
+        TakeDamage(dmg, true, null);
+    }
+
+    public void TakeDamage(float dmg, bool showDamageEffect, Vector3? hitSourcePosition = null)
+    {
+        // Revisamos si tenía gomita ANTES de aplicar el daño de este golpe
+        bool hadGummyBeforeHit = CurrentHealth > 1f;
+
         base.TakeDamage(dmg);
         UpdateDamageVisuals();
-        if (PlayerManager.Instance != null && PlayerManager.Instance.playerAnimationManager != null)
+
+        if (showDamageEffect && hadGummyBeforeHit && PlayerManager.Instance != null && PlayerManager.Instance.playerAnimationManager != null)
         {
             PlayerManager.Instance.playerAnimationManager.PlayDamageEffect();
         }
-        // -----------------------------------------------------------
 
         if (CurrentHealth <= 0)
         {
             Die();
         }
+        else if (showDamageEffect && PlayerManager.Instance != null && PlayerManager.Instance.playerAnimationManager != null)
+        {
+            if (hitSourcePosition.HasValue)
+                PlayerManager.Instance.playerAnimationManager.PlayDirectionalDamageAnimation(hitSourcePosition.Value);
+            else
+                PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation("Take_Damage_01");
+
+            lifeSystemUIManager.UpdateHearths(CurrentHealth, MaxHealth);
+        }
         else
         {
-            PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation("Take_Damage_01");
             lifeSystemUIManager.UpdateHearths(CurrentHealth, MaxHealth);
         }
     }
-    
     private void Update()
     {
         // E FRAMES UPDATE

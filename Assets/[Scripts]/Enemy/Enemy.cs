@@ -266,7 +266,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
         hasHitThisAttack = true;   // un solo golpe por ataque
         // Debug.Log($"<color=red>{name} golpea al jugador con {damage} de daño!</color>");
-        ph.TakeDamage(damage);
+        ph.TakeDamage(damage, true, transform.position); // <--- AQUÍ le mandamos la posición del enemigo
         DeactivateHitbox();
     }
 

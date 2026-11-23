@@ -196,4 +196,35 @@ public class PlayerAnimationManager : MonoBehaviour
         isDamageEffectPlaying = damageParticles.Length > 0;
         // shortcut: el efecto debe no estar en Loop; agrega un cierre explícito si se vuelve continuo.
     }
+    public void PlayDirectionalDamageAnimation(Vector3 hitSourcePosition)
+    {
+        // 1. Vector desde el jugador hacia donde ocurrió el golpe
+        Vector3 dirToSource = hitSourcePosition - transform.position;
+        dirToSource.y = 0f; // Evitamos inclinaciones arriba/abajo
+
+        // Si no hay diferencia de posición, usamos la animación general de respaldo
+        if (dirToSource.sqrMagnitude <= 0.0001f)
+        {
+            PlayOnTakeAnimation("Take_Damage_01");
+            return;
+        }
+
+        // 2. Pasamos la dirección a coordenadas locales del jugador:
+        // localDir.z > 0 = delante | localDir.z < 0 = atrás
+        // localDir.x > 0 = derecha | localDir.x < 0 = izquierda
+        Vector3 localDir = transform.InverseTransformDirection(dirToSource.normalized);
+        string animName;
+
+        if (Mathf.Abs(localDir.z) >= Mathf.Abs(localDir.x))
+        {
+            animName = localDir.z >= 0f ? "Take_Damage_Front" : "Take_Damage_Back";
+        }
+        else
+        {
+            animName = localDir.x >= 0f ? "Take_Damage_Right" : "Take_Damage_Left";
+        }
+
+        // 3. Reproducimos la animación elegida
+        PlayOnTakeAnimation(animName);
+    }
 }

@@ -116,7 +116,7 @@ public class PlayerCombat : MonoBehaviour
         int currentShootDamage = stats.shootingDamage;
 
         if (playerManager.playerHealth.CurrentHealth <= stats.shootingCost) return;
-        playerManager.playerHealth.TakeDamage(stats.shootingCost);
+        playerManager.playerHealth.TakeDamage(stats.shootingCost, showDamageEffect: false);
         lastProjectileTime = Time.time;
 
         PlayerManager.Instance.playerAnimationManager.PlayOnTakeAnimation("Shooting_Attack_01");
