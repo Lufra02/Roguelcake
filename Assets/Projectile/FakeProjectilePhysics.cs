@@ -11,7 +11,7 @@ public class FakeProjectilePhysics : MonoBehaviour
     [Tooltip("Qué tan fuerte 'cae' el objeto. Equivalente conceptual a la gravedad de un Rigidbody.")]
     [SerializeField] private float gravity = 20f;
     [Tooltip("Altura Y del suelo. Cuando el objeto cae por debajo de este valor, se detiene ahí.")]
-    [SerializeField] private float groundLevel = 0f;
+    [SerializeField] public float groundLevel = 0f;
 
     [Header("Efecto visual (opcional)")]
     [SerializeField] private bool randomSpin = true;

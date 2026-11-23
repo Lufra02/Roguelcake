@@ -170,6 +170,11 @@ public class Projectile : MonoBehaviour
         if (other.CompareTag("Player"))
             return;
 
+        if (other.CompareTag("Ground"))
+        {
+            Land();
+        }
+
         IDamageable damageable = other.GetComponent<IDamageable>();
 
         if (damageable == null)
@@ -306,11 +311,6 @@ public class Projectile : MonoBehaviour
             velocity.y,
             dampedHorizontal.z
         );
-
-        if (transform.position.y <= groundLevel)
-        {
-            Land();
-        }
     }
 
     private void Land()
@@ -326,13 +326,17 @@ public class Projectile : MonoBehaviour
         if (gummyPrefab != null)
         {
             Vector3 spawnPosition = transform.position;
-            spawnPosition.y = groundLevel + spawnOffset;
 
-            Instantiate(
+            //spawnPosition.y = groundLevel + spawnOffset;
+            spawnPosition.y = transform.position.y - 0.3f;
+
+            var gummy = Instantiate(
                 gummyPrefab,
                 spawnPosition,
                 gummySpawn
             );
+
+            gummy.GetComponent<FakeProjectilePhysics>().groundLevel = spawnPosition.y;
         }
 
         Destroy(gameObject);
