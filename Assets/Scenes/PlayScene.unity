@@ -163,12 +163,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   maxPlacementAttempts: 10
-  waveSpawnInterval: 0.15
+  waveSpawnInterval: 0.1
   completedRounds: 0
   roundText: {fileID: 715025660}
-  initialWaveSize: 1
-  enemiesIncreasePerRound: 5
-  gracePeriodDuration: 5
+  initialWaveSize: 3
+  enemiesIncreasePerRound: 7
+  gracePeriodDuration: 4
   periodicSpawnInterval: 5
   explosiveEnemyChance: 0.25
   explosiveEnemyUnlockRound: 4
@@ -721,7 +721,7 @@ GameObject:
   m_Layer: 0
   m_Name: Spawn3
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -734,7 +734,7 @@ Transform:
   m_GameObject: {fileID: 143366755}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 24.402779, y: 0, z: -21.994919}
+  m_LocalPosition: {x: 24.402779, y: 2.6, z: -21.994919}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1811,7 +1811,7 @@ GameObject:
   m_Layer: 0
   m_Name: Spawn4
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -1824,7 +1824,7 @@ Transform:
   m_GameObject: {fileID: 529427774}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.342779, y: 0, z: -41.48492}
+  m_LocalPosition: {x: 14.342779, y: 2.6, z: -41.48492}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2476,7 +2476,7 @@ GameObject:
   m_Layer: 0
   m_Name: Spawn1
   m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -2489,7 +2489,7 @@ Transform:
   m_GameObject: {fileID: 822793751}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.16278, y: 0.695, z: -9.51392}
+  m_LocalPosition: {x: 11.16278, y: 2.669, z: -9.51392}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6203,7 +6203,7 @@ GameObject:
   m_Layer: 0
   m_Name: Spawn2
   m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -6216,7 +6216,7 @@ Transform:
   m_GameObject: {fileID: 1894725870}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 18.10195, y: 0.47, z: -31.654919}
+  m_LocalPosition: {x: 18.10195, y: 2.6, z: -31.654919}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
