@@ -100,11 +100,18 @@ public class PlayerCombat : MonoBehaviour
         Vector3 hitCenter = physicalAimPoint.position + aimDir * (physicalAttackSize * 0.5f);
 
         Collider[] hits = Physics.OverlapSphere(hitCenter, physicalAttackSize * 0.5f, enemyLayer);
+
+        Debug.Log("Hay " +  hits.Length + " enemigos");
+
         foreach (Collider hit in hits)
         {
+
+            Debug.Log("enemigo: " + hit.name);
+
             var damageable = hit.GetComponent<IDamageable>();
             if (damageable != null)
             {
+                Debug.Log("le pego a: " + hit.gameObject.name);
                 damageable.TakeDamage(stats.physicalDamage);
             }
         }
@@ -149,7 +156,7 @@ public class PlayerCombat : MonoBehaviour
     }
 
     // Ayuda visual en el editor para ver el rango del ataque cuerpo a cuerpo
-    void OnDrawGizmosSelected()
+    void OnDrawGizmos()
     {
         if (playerController == null) return;
         Gizmos.color = Color.red;

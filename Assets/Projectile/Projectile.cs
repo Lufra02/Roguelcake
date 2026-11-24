@@ -14,7 +14,7 @@ public class Projectile : MonoBehaviour
 
     [Header("Caída al perder alcance")]
     [SerializeField, Min(0.1f)] private float horizontalDeceleration = 15f;
-    [SerializeField] private float groundLevel = 0f;
+    // [SerializeField] private float groundLevel = 0f;
 
     [Header("Rebote entre enemigos")]
     private bool isBouncy;
