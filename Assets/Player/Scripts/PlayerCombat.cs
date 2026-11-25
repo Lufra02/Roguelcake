@@ -101,17 +101,11 @@ public class PlayerCombat : MonoBehaviour
 
         Collider[] hits = Physics.OverlapSphere(hitCenter, physicalAttackSize * 0.5f, enemyLayer);
 
-        Debug.Log("Hay " +  hits.Length + " enemigos");
-
         foreach (Collider hit in hits)
         {
-
-            Debug.Log("enemigo: " + hit.name);
-
             var damageable = hit.GetComponent<IDamageable>();
             if (damageable != null)
             {
-                Debug.Log("le pego a: " + hit.gameObject.name);
                 damageable.TakeDamage(stats.physicalDamage);
             }
         }
