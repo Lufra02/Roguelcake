@@ -64,7 +64,6 @@ public class PlayerHealth : Health
         UpdateDamageVisuals();
 
         lifeSystemUIManager.UpdateHearths(CurrentHealth, MaxHealth);
-        print($"Current: {CurrentHealth} / Max: {MaxHealth}");
     }
 
     public override void TakeDamage(float dmg)

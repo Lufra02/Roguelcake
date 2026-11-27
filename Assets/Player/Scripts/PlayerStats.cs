@@ -12,7 +12,6 @@ public class PlayerStats : MonoBehaviour
     public int requiredXP;
     
     [SerializeField] TextMeshProUGUI levelText;
-    [SerializeField] TextMeshProUGUI currentExpText;
     [SerializeField] Slider expSlider; 
     
     [Tooltip("XP necesaria para pasar del nivel 1 al 2. Base de la curva de progresión.")]
@@ -147,7 +146,6 @@ public class PlayerStats : MonoBehaviour
 
     public void RefreshExpUI()
     {
-        currentExpText.text = currentXP + " / " + requiredXP;
         expSlider.value = currentXP;
         expSlider.maxValue = requiredXP;
     }
