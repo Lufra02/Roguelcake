@@ -149,7 +149,7 @@ public class Projectile : MonoBehaviour
         if (isHugeBullet_)
         {
             damage += (hugeDamagePercent_ / 100f) * damage;
-            transform.localScale *= 3f;
+            transform.localScale *= 1.25f;
         }
 
         maxTravelDistance = Mathf.Max(0, newMaxTravelDistance);
@@ -183,7 +183,10 @@ public class Projectile : MonoBehaviour
 
         damageable.TakeDamage(damage);
 
-        Debug.Log("Atravisa los primeros set ups");
+        if (!isHugeGun) {
+            Land();
+        }
+
 
         if (isExplosive)
         {
@@ -193,7 +196,6 @@ public class Projectile : MonoBehaviour
 
         if (isBouncy && bouncesDone < maxBounces)
         {
-            Debug.Log("Quiere rebotar");
             if (TryBounceToClosestEnemy(other))
             {
                 bouncesDone++;

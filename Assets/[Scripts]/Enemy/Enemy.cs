@@ -277,8 +277,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         if (isDead)
             return;
 
-        print("Fue golpeado por el player");
-
         amount = Mathf.Max(0f, amount);
         currentHealth -= amount;
 
