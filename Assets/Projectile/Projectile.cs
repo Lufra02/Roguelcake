@@ -155,6 +155,7 @@ public class Projectile : MonoBehaviour
         maxTravelDistance = Mathf.Max(0, newMaxTravelDistance);
 
         isBouncy = isBouncy_;
+
         maxBounces = Mathf.Max(0, newMaxBounces);
 
         isExplosive = isExplosive_;
@@ -182,6 +183,8 @@ public class Projectile : MonoBehaviour
 
         damageable.TakeDamage(damage);
 
+        Debug.Log("Atravisa los primeros set ups");
+
         if (isExplosive)
         {
             Explode();
@@ -190,6 +193,7 @@ public class Projectile : MonoBehaviour
 
         if (isBouncy && bouncesDone < maxBounces)
         {
+            Debug.Log("Quiere rebotar");
             if (TryBounceToClosestEnemy(other))
             {
                 bouncesDone++;
@@ -202,6 +206,9 @@ public class Projectile : MonoBehaviour
 
     private bool TryBounceToClosestEnemy(Collider enemyJustHit)
     {
+
+        initPosition = transform.position;
+
         Collider[] enemies = Physics.OverlapSphere(
             transform.position,
             bounceSearchRadius,

@@ -15169,6 +15169,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2011555633}
     - target: {fileID: 7609237981641610731, guid: dbadc7244019f2a47a302d5f62ec44e8, type: 3}
+      propertyPath: bouncyGun
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7609237981641610731, guid: dbadc7244019f2a47a302d5f62ec44e8, type: 3}
       propertyPath: expSlider
       value: 
       objectReference: {fileID: 1533550277}
@@ -15184,6 +15188,10 @@ PrefabInstance:
       propertyPath: currentExpText
       value: 
       objectReference: {fileID: 2082209901}
+    - target: {fileID: 7609237981641610731, guid: dbadc7244019f2a47a302d5f62ec44e8, type: 3}
+      propertyPath: projectileBounces
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7609237981641610731, guid: dbadc7244019f2a47a302d5f62ec44e8, type: 3}
       propertyPath: physicalAttackSize
       value: 3.5
